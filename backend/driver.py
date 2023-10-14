@@ -67,6 +67,7 @@ def generate_graph():
                 continue
         curr_paper_ids = next_paper_ids
         next_paper_ids = set()
+        print(f"Size of next: {len(curr_paper_ids)}")
 
     return papers
 
