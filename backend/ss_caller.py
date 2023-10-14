@@ -117,14 +117,18 @@ def get_metadata_ss(paper_id: str):
 
 def get_metadata(paper_id: str):
     '''Returns the metadata for a paper by sourcing it from either the database or from semantic scholar'''
-    rec = dbd.fetch_record("paperTable", "paper_id", paper_id)["paper_metadata"]
+    rec = dbd.fetch_record("paperTable", "paper_id", paper_id)
     if rec is None:
         rec = get_metadata_ss(paper_id)
         dbd.set_record("paperTable", "paper_id", paper_id, rec)
+    else:
+        rec = rec["paper_metadata"]
     return rec
     
 
 if __name__ == "__main__":
-    ggp = get_metadata("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
+    """ ggp = get_metadata("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
     ggt = get_reference_metadata(ggp['references'])
-    breakpoint()
+    breakpoint() """
+    rec = get_metadata_ss("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
+    dbd.set_record("paperTable", "paper_id", "0bc975e61002ec29ac67d44d91d35cdbfc56982a", rec)

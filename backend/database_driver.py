@@ -29,15 +29,29 @@ class DbDriver():
 
     def set_record(self, table : str, primary_key : str, primary_key_value : str, json_object : str, gpt_summaries : str = None):
 
+        table_name = table
+        table = self.db_client.Table(table)
+
+        pk_pair = {primary_key: primary_key_value}
+
         if gpt_summaries is None:
 
-            gpt_summaries = "null"
+            update_expression = 'SET paper_metadata = :pm'
+            update_values = {
+                ':pm': json_object
+            }
 
-        table = self.db_client.Table(table)
-        response = table.put_item(
-            Item={
-                primary_key: primary_key_value,
-                'paper_metadata': json_object,
-                'gpt_summaries': gpt_summaries
-                }
-        )
+        else:
+
+            update_expression = 'SET paper_metadata = :pm, gpt_summaries = :gpts'
+            update_values = {
+                ':pm': json_object,
+                ':gpts': gpt_summaries
+            }
+
+        response = table.update_item(
+                TableName=table_name,
+                Key=pk_pair,
+                UpdateExpression=update_expression,
+                ExpressionAttributeValues=update_values
+            )
