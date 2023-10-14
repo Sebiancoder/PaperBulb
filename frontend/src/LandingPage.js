@@ -3,6 +3,7 @@ import Search from './Search';
 
 const LandingPage = ({ handleEnterSite }) => {
     const [papers, setPapers] = useState({});
+    console.log("Papers Response:", papers);
 
     return (
         <div>
