@@ -2,15 +2,36 @@ from secrets.secrets import SEMSCHO
 import os
 import openai
 import requests
-
-SS = False
+import urllib.request
+import PyPDF2
+import datetime
 
 def search10(query: str):
+    '''Searches a term in semantic scholar and returns the 10 most relevant articles'''
     return requests.get(f"http://api.semanticscholar.org/graph/v1/paper/search?query={query.replace(' ', '+')}", headers={'X-API-KEY': SEMSCHO}).json()
 
+def download_pdf(url: str):
+    '''Downloads a PDF from a link and returns the relative file path'''
+    try:
+        rel_path = f"backend/temp/{datetime.datetime.now().timestamp()}"
+        urllib.request.urlretrieve(pdf_link, rel_path, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36'})
+        return rel_path
+    except:
+        return None
 
-pdf_link = "https://www.researchgate.net/profile/Lu-Lu-51/publication/350158010_Learning_nonlinear_operators_via_DeepONet_based_on_the_universal_approximation_theorem_of_operators/links/607e32a6907dcf667baf49fd/Learning-nonlinear-operators-via-DeepONet-based-on-the-universal-approximation-theorem-of-operators.pdf?_sg%5B0%5D=started_experiment_milestone&_sg%5B1%5D=started_experiment_milestone&origin=journalDetail&_rtd=e30%3D"
+def parse_pdf(url: str):
+    rel_path = download_pdf(url)
+    if rel_path is not None:
+        pdf_file = open(rel_path, 'rb')
+        pdf_reader = PyPDF2.PdfReader(pdf_file)
+        text = ''
+        for pg in pdf_reader.pages:
+            text += pg.extract_text() + "\n\n"
+        pdf_file.close()
+        return text
+    else:
+        print("failure downloading pdf")
+        return None
 
-import wget
-requests.get(pdf_link)
+ggt = parse_pdf("https://arxiv.org/pdf/1703.06870.pdf")
 breakpoint()
