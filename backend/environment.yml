@@ -9,3 +9,4 @@ dependencies:
   - scikit-learn
   - pip:
     - openai==4.0.0
+    - boto3
