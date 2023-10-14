@@ -2,7 +2,10 @@
 const backendUrl = 'we need to figure this out';
 
 // Function to make a request
-function sendBackendRequest() {
+function sendBackendRequest(endpoint, args, the_rest) {
+
+  apiUrl = backendUrl + endpoint + "?" + the_rest
+
   fetch(apiUrl)
     .then((response) => {
       if (!response.ok) {
