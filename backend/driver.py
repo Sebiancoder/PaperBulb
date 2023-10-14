@@ -62,9 +62,12 @@ def generate_graph():
     next_paper_ids = set()
     for _ in range(references_dlimit):
         for curr_paper_id in curr_paper_ids:
-            papers = {**papers, **get_reference_metadata(curr_paper_id)}
-            for ref in metadata['references']:
-                next_paper_ids.add(ref)
+            new_papers = get_reference_metadata(papers[curr_paper_id]['references'])
+            papers = {**papers, **new_papers}
+            for new_paper in new_papers:
+                for ref in new_paper['references']:
+                    if ref not in papers:
+                        next_paper_ids.add(ref)
         curr_paper_ids = next_paper_ids
         next_paper_ids = set()
         print(f"Size of next: {len(curr_paper_ids)}")
