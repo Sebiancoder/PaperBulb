@@ -28,11 +28,11 @@ class OaiCaller():
     def getGptSummary(self, abstract : str, ulev : str):
 
         levels = {
-        'mis': "middle school student",
-        'hs': "high school student",
-        'bs': "undergraduate college student",
-        'ms': "master's student",
-        'phd': "phd"
+            'mis': "middle school student",
+            'hs': "high school student",
+            'bs': "undergraduate college student",
+            'ms': "master's student",
+            'phd': "phd"
         }
 
         prompt = abstract + "Rewrite the previous so as to make it understandable by a " + levels[ulev]

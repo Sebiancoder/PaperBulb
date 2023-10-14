@@ -2,7 +2,7 @@ import json
 from flask import Flask, request, Response
 from werkzeug.wrappers import Request
 from database_driver import DbDriver
-from ss_caller import get_metadata, search10, get_list_of_metadata
+from ss_caller import SS
 from oai_caller import OaiCaller
 from flask_cors import CORS
 
@@ -12,6 +12,7 @@ CORS(app)
 #database object
 db_driver = DbDriver()
 oai_caller = OaiCaller()
+ss = SS()
 
 class Driver:
 
@@ -63,14 +64,14 @@ def generate_graph():
         return "FAIL"
 
     # Collect all paper metadata, indexed by paper_id
-    papers = {start_paper: get_metadata(start_paper)}
+    papers = {start_paper: ss.get_metadata(start_paper)}
     curr_paper_ids = {start_paper}
     next_paper_ids = set()
     for _ in range(references_dlimit):
         for curr_paper_id in curr_paper_ids:
             # Find next papers that haven't already been discovered
             next_refs = [val for val in papers[curr_paper_id]['references'] if val not in papers]
-            new_papers = get_list_of_metadata(next_refs)
+            new_papers = ss.get_list_of_metadata(next_refs)
 
             # Filter
             def dec_to_int(dec):
@@ -203,13 +204,13 @@ def search_papers():
     '''Returns the 10 most relevant articles for a given query'''
     query = request.args.get("query")
 
-    query_result = search10(query)
+    query_result = ss.search10(query)
 
     if query_result is None:
         print("Query search fail")
         return "FAIL"
 
-    papers = {paper_id:get_metadata(paper_id) for paper_id in query_result}
+    papers = {paper_id:ss.get_metadata(paper_id) for paper_id in query_result}
     return papers if papers is not None else "FAIL"
 
 if __name__ == '__main__':
