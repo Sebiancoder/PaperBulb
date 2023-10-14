@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Form, FormControl, Button } from 'react-bootstrap';
+import sendBackendRequest from './sendBackendRequest.js';
 
-function Search() {
+function Search({ setPapers }) {
     const [searchText, setSearchText] = useState('CNN');
 
-    const handleSearch = (event) => {
+    const handleSearch = async (event) => {
         event.preventDefault();
         console.log(`Searching for ${searchText}`);
+        const papersResponse = await sendBackendRequest(searchText);
+        setPapers(papersResponse);
     };
 
     return (
