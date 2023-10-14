@@ -1,7 +1,4 @@
-import React, { useCallback } from 'react';
-import Search from './Search';
-import './App.css';
-
+import { useCallback } from 'react';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -9,8 +6,9 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   addEdge,
-} from 'react-flow-renderer';
-import 'react-flow-renderer/dist/style.css';
+} from 'reactflow';
+
+import 'reactflow/dist/style.css';
 
 const initialNodes = [
   { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
@@ -20,7 +18,7 @@ const initialNodes = [
 const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
 
 function Flow() {
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
@@ -40,17 +38,4 @@ function Flow() {
   );
 }
 
-function App() {
-  return (
-    <div className="app">
-      <div className='toolbar'>
-        <h1>PaperBulb</h1>
-        <Search />
-
-      </div>
-      <Flow />
-    </div>
-  );
-}
-
-export default App;
+export default Flow;
