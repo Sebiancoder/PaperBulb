@@ -2,7 +2,7 @@ import json
 from flask import Flask, request, Response
 from werkzeug.wrappers import Request
 from database_driver import DbDriver
-from ss_caller import get_metadata
+from ss_caller import get_metadata, search10
 
 app = Flask("paperbulb")
 
@@ -89,6 +89,10 @@ def get_gpt_summary():
 def search_papers():
 
     query = request.args.get("query")
+
+    papers = search10(query)
+
+    return papers if papers is not None else "FAIL"
 
 if __name__ == '__main__':
     app.wsgi_app = Driver(app.wsgi_app)

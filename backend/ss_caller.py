@@ -26,7 +26,7 @@ dbd = DbDriver()
 def search10(query: str):
     '''Searches a term in semantic scholar and returns the 10 most relevant articles'''
     try:
-        return requests.get(f"http://api.semanticscholar.org/graph/v1/paper/search?query={query.replace(' ', '+')}", headers={'X-API-KEY': SEMSCHO}).json()
+        return [paper['paperId'] for paper in requests.get(f"http://api.semanticscholar.org/graph/v1/paper/search?query={query.replace(' ', '+')}", headers={'X-API-KEY': SEMSCHO}).json()['data']]
     except:
         print("Failure searching 10 most relevant articles")
         return None
