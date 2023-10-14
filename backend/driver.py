@@ -62,8 +62,6 @@ def generate_graph():
         curr_paper_ids = next_paper_ids
         next_paper_ids = {}
 
-    # Construct graph
-
     return papers
 
 @app.route('/get_gpt_summary')
