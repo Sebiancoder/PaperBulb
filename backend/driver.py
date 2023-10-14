@@ -2,7 +2,7 @@ import json
 from flask import Flask, request, Response
 from werkzeug.wrappers import Request
 from database_driver import DbDriver
-from ss_caller import get_metadata, search10
+from ss_caller import get_metadata, search10, get_reference_metadata
 from oai_caller import OaiCaller
 from flask_cors import CORS
 
@@ -57,28 +57,17 @@ def generate_graph():
         return "FAIL"
 
     # Collect all paper metadata, indexed by paper_id
-    papers = {}
+    papers = {get_metadata(start_paper)}
     curr_paper_ids = {start_paper}
     next_paper_ids = set()
     for _ in range(references_dlimit):
         for curr_paper_id in curr_paper_ids:
-            if curr_paper_id not in papers:
-                metadata = get_metadata(curr_paper_id)
-                papers[curr_paper_id] = metadata
-                for ref in metadata['references']:
-                    next_paper_ids.add(ref)
-            else:
-                continue
+            papers = {**papers, **get_reference_metadata(curr_paper_id)}
+            for ref in metadata['references']:
+                next_paper_ids.add(ref)
         curr_paper_ids = next_paper_ids
         next_paper_ids = set()
         print(f"Size of next: {len(curr_paper_ids)}")
-
-    for curr_paper_id in curr_paper_ids:
-        if curr_paper_id not in papers:
-            metadata = get_metadata(curr_paper_id)
-            papers[curr_paper_id] = metadata
-        else:
-            continue
 
     return papers
 
@@ -91,16 +80,103 @@ def get_gpt_summary():
     record = db_driver.fetch_record(
         table="paperTable",
         primary_key="paper_id",
-        primary_key_value=paper,
-        column="gpt_summaries")
+        primary_key_value=paper)
 
     print(record)
 
+    if record is None:
+        return "FAIL"
+
     abstract = record["paper_metadata"]["abstract"]
+
+    if "gpt_summaries" not in record or record["gpt_summaries"] is None:
+
+        generated_summary = oai_caller.getGptSummary(abstract, ulev)
+
+        gptsum_json = {
+            ulev: generated_summary
+        }
+
+        db_driver.update_record(
+            table="paperTable",
+            primary_key="paper_id",
+            primary_key_value=paper,
+            json_object=record["paper_metadata"],
+            gpt_summaries=gptsum_json
+        )
+
+        return generated_summary
+
+    gptsums = record["gpt_summaries"]
+
+    if ulev in gptsums:
+        return gptsums[ulev]
 
     generated_summary = oai_caller.getGptSummary(abstract, ulev)
 
+    gptsums[ulev] = generated_summary
+
+    db_driver.update_record(
+            table="paperTable",
+            primary_key="paper_id",
+            primary_key_value=paper,
+            json_object=record["paper_metadata"],
+            gpt_summaries=gptsums
+        )
+
     return generated_summary
+
+@app.route('/get_jargon')
+def get_jargon():
+
+    paper = request.args.get("paper")
+
+    record = db_driver.fetch_record(
+        table="paperTable",
+        primary_key="paper_id",
+        primary_key_value=paper)
+
+    if record is None:
+        return "FAIL"
+
+    abstract = record["paper_metadata"]["abstract"]
+
+    if "gpt_summaries" not in record or record["gpt_summaries"] is None:
+
+        jargon = oai_caller.getJargon(abstract)
+
+        gptsum_json = {
+            "jargon": jargon
+        }
+
+        db_driver.update_record(
+            table="paperTable",
+            primary_key="paper_id",
+            primary_key_value=paper,
+            json_object=record["paper_metadata"],
+            gpt_summaries=gptsum_json
+        )
+
+        return jargon
+
+    gptsums = record["gpt_summaries"]
+
+    if "jargon" in gptsums:
+        return gptsums["jargon"]
+
+    jargon = oai_caller.getJargon(abstract)
+
+    gptsums["jargon"] = jargon
+
+    db_driver.update_record(
+            table="paperTable",
+            primary_key="paper_id",
+            primary_key_value=paper,
+            json_object=record["paper_metadata"],
+            gpt_summaries=gptsums
+        )
+
+    return jargon
 
 @app.route('/search_papers')
 def search_papers():
