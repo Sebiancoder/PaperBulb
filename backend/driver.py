@@ -2,7 +2,7 @@ import json
 from flask import Flask, request, Response
 from werkzeug.wrappers import Request
 from database_driver import DbDriver
-from ss_caller import get_metadata, search10
+from ss_caller import get_metadata, search10, get_reference_metadata
 from oai_caller import OaiCaller
 from flask_cors import CORS
 
@@ -57,28 +57,17 @@ def generate_graph():
         return "FAIL"
 
     # Collect all paper metadata, indexed by paper_id
-    papers = {}
+    papers = {get_metadata(start_paper)}
     curr_paper_ids = {start_paper}
     next_paper_ids = set()
     for _ in range(references_dlimit):
         for curr_paper_id in curr_paper_ids:
-            if curr_paper_id not in papers:
-                metadata = get_metadata(curr_paper_id)
-                papers[curr_paper_id] = metadata
-                for ref in metadata['references']:
-                    next_paper_ids.add(ref)
-            else:
-                continue
+            papers = {**papers, **get_reference_metadata(curr_paper_id)}
+            for ref in metadata['references']:
+                next_paper_ids.add(ref)
         curr_paper_ids = next_paper_ids
         next_paper_ids = set()
         print(f"Size of next: {len(curr_paper_ids)}")
-
-    for curr_paper_id in curr_paper_ids:
-        if curr_paper_id not in papers:
-            metadata = get_metadata(curr_paper_id)
-            papers[curr_paper_id] = metadata
-        else:
-            continue
 
     return papers
 
