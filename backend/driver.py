@@ -73,6 +73,13 @@ def generate_graph():
         next_paper_ids = set()
         print(f"Size of next: {len(curr_paper_ids)}")
 
+    for curr_paper_id in curr_paper_ids:
+        if curr_paper_id not in papers:
+            metadata = get_metadata(curr_paper_id)
+            papers[curr_paper_id] = metadata
+        else:
+            continue
+
     return papers
 
 @app.route('/get_gpt_summary')
