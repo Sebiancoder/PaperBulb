@@ -1,4 +1,4 @@
-from secrets.secrets import OPENAI
+from secretK.secretK import OPENAI
 import os
 import openai
 import requests
