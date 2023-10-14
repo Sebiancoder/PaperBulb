@@ -90,7 +90,7 @@ def search_papers():
 
     query = request.args.get("query")
 
-    papers = search10(query)
+    papers = [get_metadata(paper_id) for paper_id in search10(query)]
 
     return papers if papers is not None else "FAIL"
 
