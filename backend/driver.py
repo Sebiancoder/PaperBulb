@@ -62,7 +62,7 @@ def generate_graph():
     next_paper_ids = set()
     for _ in range(references_dlimit):
         for curr_paper_id in curr_paper_ids:
-            new_papers = get_list_of_metadata(papers[curr_paper_id]['references'])
+            new_papers = get_list_of_metadata(papers[curr_paper_id]['references'], curr_paper_id)
             papers = {**papers, **new_papers}
             for new_paper in new_papers.values():
                 for ref in new_paper['references']:
