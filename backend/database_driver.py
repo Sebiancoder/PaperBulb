@@ -25,7 +25,7 @@ class DbDriver():
 
         match_item = response['Items'][0]
 
-        return match_item['json_object']
+        return match_item
 
     def set_record(self, table : str, primary_key : str, primary_key_value : str, json_object : str, gpt_summaries : str = None):
 
@@ -37,7 +37,7 @@ class DbDriver():
         response = table.put_item(
             Item={
                 primary_key: primary_key_value,
-                'json_object': json_object,
+                'paper_metadata': json_object,
                 'gpt_summaries': gpt_summaries
                 }
         )

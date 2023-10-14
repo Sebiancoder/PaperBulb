@@ -32,7 +32,7 @@ def fetch_paper():
     record = db_driver.fetch_record(
         table="paperTable",
         primary_key="paper_id",
-        primary_key_value=paper)
+        primary_key_value=paper)["paper_metadata"]
     
     print("record")
     print(record.keys())
@@ -79,18 +79,21 @@ def generate_graph():
 def get_gpt_summary():
 
     paper = request.args.get("paper")
-    understanding_level = request.args.get("ulev")
+    ulev = request.args.get("ulev")
 
     record = db_driver.fetch_record(
         table="paperTable",
         primary_key="paper_id",
-        primary_key_value=paper)
+        primary_key_value=paper,
+        column="gpt_summaries")
 
-    abstract = record["abstract"]
+    print(record)
 
-    prompt = abstract + "Rewrite the previous so as to make it understandable by a " + ulev
+    abstract = record["paper_metadata"]["abstract"]
 
-    return oai_caller.callModel(prompt)
+    generated_summary = oai_caller.getGptSummary(abstract, ulev)
+
+    return generated_summary
 
 @app.route('/search_papers')
 def search_papers():

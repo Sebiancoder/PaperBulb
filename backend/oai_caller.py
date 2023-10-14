@@ -7,15 +7,34 @@ class OaiCaller():
 
     def __init__(self):
 
-        openai.organization = "org-zVepG3kIxRXl8x7hB7Ro2zKF"
+        #openai.organization = "org-zVepG3kIxRXl8x7hB7Ro2zKF"
         openai.api_key = f"{OPENAI}"
 
-    def callModel(prompt : str):
+    def callModel(self, prompt : str):
+
+        print("prompt")
+        print(prompt)
 
         response = openai.Completion.create(
-            engine="davinci",  # Choose the appropriate engine
+            engine="text-davinci-003",  # Choose the appropriate engine
             prompt=prompt,
-            max_tokens=50  # Maximum number of tokens in the response
+            max_tokens=1750  # Maximum number of tokens in the response
         )
 
-        return response.choices[0].text
+        print(response)
+
+        return response["choices"][0].text
+
+    def getGptSummary(self, abstract : str, ulev : str):
+
+        levels = {
+        'mis': "middle school student",
+        'hs': "high school student",
+        'bs': "undergraduate college student",
+        'ms': "master's student",
+        'phd': "phd"
+        }
+
+        prompt = abstract + "Rewrite the previous so as to make it understandable by a " + levels[ulev]
+
+        return self.callModel(prompt)
