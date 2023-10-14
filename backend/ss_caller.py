@@ -11,7 +11,7 @@ Credit for API: Semantic Scholar
 }
 '''
 
-from secrets.secrets import SEMSCHO
+from secretK.secretK import SEMSCHO
 import os
 import openai
 import requests
@@ -82,5 +82,22 @@ def get_references(paper_id: str):
         print("Failure retrieving references")
         return None
 
+def get_metadata(paper_id: str):
+    '''Returns all metadata for the given paper id'''
+    link = f"https://www.semanticscholar.org/paper/{paper_id}"
+    try:
+        response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,authors,abstract,citations,references,year,journal', headers={'X-API-KEY': SEMSCHO}).json()
+        title = response['title']
+        authors = response['authors']
+        year = response['year']
+        abstract = response['abstract']
+        journal = response['journal']
+        citations = response['citations']
+        references = response['references']
+        return {"url":link, "title":title, "authors":authors, "year":year, "abstract":abstract, "citations":citations, "journal":journal, "references":references}
+    except:
+        print("Failure retrieving metadata")
+        return None
+
 if __name__ == "__main__":
-    breakpoint() 
+    breakpoint()
