@@ -109,13 +109,13 @@ class DbDriver():
         
         update_expression = 'SET gpt_summaries = :gpts'
         update_values = {
-            ':gpts': json_object
+            ':gpts': gpt
         }
 
         response = table.update_item(
-                TableName=table_name,
+                TableName=table,
                 Key=pk_pair,
                 UpdateExpression=update_expression,
-                ExpressionAttributeValues=update_values
+                ExpressionAttributeValues=update_values)
 
     
