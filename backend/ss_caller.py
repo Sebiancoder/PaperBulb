@@ -95,8 +95,8 @@ def get_metadata_ss(paper_id: str):
         year = response['year']
         abstract = response['abstract']
         journal = response['journal']
-        citations = response['citations']
-        references = response['references']
+        citations = [cit['paperId'] for cit in response['citations']]
+        references = [ref['paperId'] for ref in response['references']]
         return {"url":link, "title":title, "authors":authors, "year":year, "abstract":abstract, "citations":citations, "journal":journal, "references":references}
     except:
         print("Failure retrieving metadata")

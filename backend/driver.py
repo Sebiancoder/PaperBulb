@@ -1,6 +1,7 @@
 from flask import Flask, request, Response
 from werkzeug.wrappers import Request
 from database_driver import DbDriver
+from ss_caller import get_metadata
 
 app = Flask("paperbulb")
 
@@ -43,7 +44,25 @@ def generate_graph(start_paper : int):
     cb_dlimit = request.args.get("cb_dlim", "")
     start_paper = request.args.get("start_paper", "")
 
-    pass
+    # Collect all paper metadata, indexed by paper_id
+    papers = {}
+    curr_paper_ids = {start_paper}
+    next_paper_ids = {}
+    for _ in range(references_dlimit):
+        for curr_paper_id in curr_paper_ids:
+            if curr_paper_id not in papers:
+                metadata = get_metadata(curr_paper_id)
+                papers[curr_paper_id] = metadata
+                for ref in metadata['references']:
+                    next_paper_ids.add(ref['paperId'])
+            else:
+                continue
+        curr_paper_ids = next_paper_ids
+        next_paper_ids = {}
+
+    # Construct graph
+
+    return papers
 
 @app.route('/get_gpt_summary')
 def get_gpt_summary(paper : str):
