@@ -105,7 +105,7 @@ def get_reference_metadata(reference_paper_ids: list):
             json={"ids": reference_paper_ids}
         ).json()
         response = list(filter(lambda resp: resp is not None, response))
-        refs = [metadata_cutter(resp['paperId'], resp) for resp in response]
+        refs = {resp['paperId']:metadata_cutter(resp['paperId'], resp) for resp in response}
         return refs
     except:
         print("Failure retrieving references")
@@ -125,13 +125,15 @@ def get_metadata(paper_id: str):
     rec = dbd.fetch_record("paperTable", "paper_id", paper_id)
     if rec is None:
         rec = get_metadata_ss(paper_id)
-        dbd.update_record("paperTable", "paper_id", paper_id, rec)
+        if rec is not None:
+            dbd.update_record("paperTable", "paper_id", paper_id, rec)
     else:
         rec = rec["paper_metadata"]
     return rec
     
 
 if __name__ == "__main__":
-    ggp = get_metadata("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
-    ggt = get_reference_metadata(ggp['references'])
+    ggp = get_metadata("1a0912bb76777469295bb2c059faee907e7f3258")
+    # ggp = get_metadata("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
+    # ggt = get_reference_metadata(ggp['references'])
     breakpoint()
