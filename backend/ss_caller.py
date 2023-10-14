@@ -11,7 +11,7 @@ Credit for API: Semantic Scholar
 }
 '''
 
-from secrets.secrets import SEMSCHO
+from secretK.secretK import SEMSCHO
 import os
 import openai
 import requests
@@ -19,11 +19,14 @@ import urllib.request
 import PyPDF2
 import datetime
 import json
+from database_driver import DbDriver
+
+dbd = DbDriver()
 
 def search10(query: str):
     '''Searches a term in semantic scholar and returns the 10 most relevant articles'''
     try:
-        return requests.get(f"http://api.semanticscholar.org/graph/v1/paper/search?query={query.replace(' ', '+')}", headers={'X-API-KEY': SEMSCHO}).json()
+        return [paper['paperId'] for paper in requests.get(f"http://api.semanticscholar.org/graph/v1/paper/search?query={query.replace(' ', '+')}", headers={'X-API-KEY': SEMSCHO}).json()['data']]
     except:
         print("Failure searching 10 most relevant articles")
         return None
@@ -82,5 +85,32 @@ def get_references(paper_id: str):
         print("Failure retrieving references")
         return None
 
+def get_metadata_ss(paper_id: str):
+    '''Returns all metadata for the given paper id'''
+    link = f"https://www.semanticscholar.org/paper/{paper_id}"
+    try:
+        response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,authors,abstract,citations,references,year,journal', headers={'X-API-KEY': SEMSCHO}).json()
+        title = response['title']
+        authors = response['authors']
+        year = response['year']
+        abstract = response['abstract']
+        journal = response['journal']
+        citations = [cit['paperId'] for cit in response['citations']]
+        references = [ref['paperId'] for ref in response['references']]
+        return {"url":link, "title":title, "authors":authors, "year":year, "abstract":abstract, "citations":citations, "journal":journal, "references":references}
+    except:
+        print("Failure retrieving metadata")
+        return None
+
+def get_metadata(paper_id: str):
+    '''Returns the metadata for a paper by sourcing it from either the database or from semantic scholar'''
+    rec = dbd.fetch_record("paperTable", "paper_id", paper_id)
+    if rec is None:
+        rec = get_metadata_ss(paper_id)
+        dbd.set_record("paperTable", "paper_id", paper_id, rec)
+    return rec
+    
+
 if __name__ == "__main__":
-    breakpoint() 
+    get_metadata("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
+    breakpoint()
