@@ -12,3 +12,4 @@ dependencies:
     - boto3
     - PyPDF2
     - wget
+    - urllib3<2
