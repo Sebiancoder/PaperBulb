@@ -85,7 +85,8 @@ def get_reference_paper_ids(paper_id: str):
         print("Failure retrieving reference ids")
         return None
 
-def metadata_cutter(response: dict):
+def metadata_cutter(paper_id: str, response: dict):
+    link = f"https://www.semanticscholar.org/paper/{paper_id}"
     title = response['title']
     authors = response['authors']
     year = response['year']
@@ -103,18 +104,18 @@ def get_reference_metadata(reference_paper_ids: list):
             params={'fields': 'title,authors,abstract,citations,references,year,journal'},
             json={"ids": reference_paper_ids}
         ).json()
-        refs = [metadata_cutter(resp) for resp in responses if resp is not None]
-        return response
+        response = list(filter(lambda resp: resp is not None, response))
+        refs = [metadata_cutter(resp['paperId'], resp) for resp in response]
+        return refs
     except:
         print("Failure retrieving references")
         return None
 
 def get_metadata_ss(paper_id: str):
     '''Returns all metadata for the given paper id'''
-    link = f"https://www.semanticscholar.org/paper/{paper_id}"
     try:
         response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,authors,abstract,citations,references,year,journal', headers={'X-API-KEY': SEMSCHO}).json()
-        return metadata_cutter(response)
+        return metadata_cutter(paper_id, response)
     except:
         print("Failure retrieving metadata")
         return None
