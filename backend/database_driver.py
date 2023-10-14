@@ -27,12 +27,13 @@ class DbDriver():
 
         return match_item['json_object']
 
-    def set_record(self, table : str, primary_key : str, primary_key_value : str, json_object : str):
+    def set_record(self, table : str, primary_key : str, primary_key_value : str, json_object : str, gpt_summaries : str):
 
         table = self.db_client.Table(table)
         response = table.put_item(
             Item={
                 primary_key: primary_key_value,
-                'json_object': json_object
+                'json_object': json_object,
+                'gpt_summaries': gpt_summaries
                 }
         )
