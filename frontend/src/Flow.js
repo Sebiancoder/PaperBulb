@@ -50,8 +50,8 @@ function FlowComponent({ onNodeClick, paperId }) {
           ref_dlim: 1,
           cb_dlim: 1,
           min_year: 1950,
-          max_ref_count: 25,
-          n_most_cited: 5
+          min_num_citations: 1001,
+          n_least_references: 5
         });
         const response = await sendBackendRequest("generate_graph", params.toString());
         if (response) {
