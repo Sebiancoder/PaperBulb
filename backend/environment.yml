@@ -1,11 +1,12 @@
 name: paperbulb
 
+channels:
+  - conda-forge
+
 dependencies:
-  - python==3.10
-  - pytorch
-  - matplotlib
-  - pandas
-  - numpy
-  - scikit-learn
+  - python==3.10.0
+  - pip==23.2.1
   - pip:
-    - openai==4.0.0
+    - openai
+    - flask
+    - boto3

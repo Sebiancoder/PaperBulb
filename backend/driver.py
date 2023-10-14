@@ -11,7 +11,7 @@ def driver(next_handler):
         #after handling
         return response
 
-    return middleware
+    return drive
 
 # Register the middleware with the app
 app.wsgi_app = drive(app.wsgi_app)
