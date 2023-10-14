@@ -118,6 +118,7 @@ def get_list_of_metadata(paper_ids: list):
         print("Error retreiving reference metadata from database")
         return None
     print(f"Relying on database for {len(rec)} of {len(paper_ids)}, semantic scholar for the rest")
+
     # Pull remaining items from semantic scholar
     ids_pulled = [*rec.keys()]
     papers_to_pull = [p_id for p_id in paper_ids if p_id not in ids_pulled]
@@ -164,5 +165,5 @@ def get_metadata(paper_id: str):
 if __name__ == "__main__":
     ggp = get_metadata("1a0912bb76777469295bb2c059faee907e7f3258")
     print(ggp['references'])
-    ggt = get_reference_metadata(ggp['references'])
+    ggt = get_list_of_metadata(ggp['references'])
     breakpoint()
