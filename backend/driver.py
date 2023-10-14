@@ -85,6 +85,11 @@ def get_gpt_summary():
 
     return abstract
 
+@app.route('/search_papers')
+def search_papers():
+
+    query = request.args.get("query")
+
 if __name__ == '__main__':
     app.wsgi_app = Driver(app.wsgi_app)
     app.run(debug=True)
