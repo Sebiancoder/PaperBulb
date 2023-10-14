@@ -27,7 +27,7 @@ class DbDriver():
 
         return match_item
 
-    def set_record(self, table : str, primary_key : str, primary_key_value : str, json_object : str, gpt_summaries : str = None):
+    def update_record(self, table : str, primary_key : str, primary_key_value : str, json_object : str, gpt_summaries : str = None):
 
         table_name = table
         table = self.db_client.Table(table)

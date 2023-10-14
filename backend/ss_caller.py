@@ -124,7 +124,7 @@ def get_metadata(paper_id: str):
     rec = dbd.fetch_record("paperTable", "paper_id", paper_id)
     if rec is None:
         rec = get_metadata_ss(paper_id)
-        dbd.set_record("paperTable", "paper_id", paper_id, rec)
+        dbd.update_record("paperTable", "paper_id", paper_id, rec)
     else:
         rec = rec["paper_metadata"]
     return rec
