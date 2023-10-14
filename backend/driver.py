@@ -63,16 +63,14 @@ def generate_graph():
     for _ in range(references_dlimit):
         for curr_paper_id in curr_paper_ids:
             new_papers = get_list_of_metadata(papers[curr_paper_id]['references'])
-            new_papers = {new_paper['paper_id']:new_paper for new_paper in new_papers}
             papers = {**papers, **new_papers}
             for new_paper in new_papers.values():
-                for ref in new_paper['paper_metadata']['references']:
+                for ref in new_paper['references']:
                     if ref not in papers:
                         next_paper_ids.add(ref)
         curr_paper_ids = next_paper_ids
         next_paper_ids = set()
         print(f"Size of next: {len(curr_paper_ids)}")
-
     return papers
 
 @app.route('/get_gpt_summary')

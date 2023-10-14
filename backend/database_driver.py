@@ -37,7 +37,7 @@ class DbDriver():
             RequestItems=query_dict
         )
 
-        match_item = response['Responses'][table]
+        match_item = {match_item['paper_id']:match_item['paper_metadata'] for match_item in response['Responses'][table]}
 
         return match_item
 

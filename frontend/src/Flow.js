@@ -51,34 +51,36 @@ function FlowComponent({ onNodeClick, paperId }) {
           cb_dlim: 1
         });
         const response = await sendBackendRequest("generate_graph", params.toString());
-
         if (response) {
             let nodes = [];
             const edges = [];
-            
             // Create node objects
             Object.keys(response).forEach(paperId => {
-                const paper = response[paperId];
-                nodes.push({
-                    id: paperId,
-                    type: 'article',
-                    year: paper.year || 0, // Assuming the data has a 'year' field
-                    position: { x: 0, y: 0 },
-                    data: { label: paper.title || 'No title', 
-                    abstract: paper.abstract || 'No abstract',
-                    authors: paper.authors || 'No authors',
-                    year: paper.year || 'No year'
-                    }
-                });
-
-                (paper.references || []).forEach(ref => {
-                    if (response[ref]) {
-                        edges.push({
-                            id: `${paperId}-${ref}`,
-                            source: paperId,
-                            target: ref,
-                            type: 'simplebezier'
-                        });
+              const paper = response[paperId];
+              if (!paper) { 
+                console.warn(`No paper metadata found for paperId: ${paperId}`);
+                return; 
+              }
+              nodes.push({
+                id: paperId,
+                type: 'article',
+                year: paper.year || 0,
+                position: { x: 0, y: 0 },
+                data: {
+                  label: paper.title || 'No title', 
+                  abstract: paper.abstract || 'No abstract',
+                  authors: paper.authors || 'No authors',
+                  year: paper.year || 'No year'
+                }
+              });
+              (paper.references || []).forEach(ref => {
+                  if (response[ref]) {
+                      edges.push({
+                          id: `${paperId}-${ref}`,
+                          source: paperId,
+                          target: ref,
+                          type: 'simplebezier'
+                      });
                     }
                 });
             });
