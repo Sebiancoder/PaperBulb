@@ -161,3 +161,4 @@ cython_debug/
 
 # keys
 backend\secrets\secrets.py
+backend/secrets/secrets.py
