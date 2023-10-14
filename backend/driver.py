@@ -47,11 +47,8 @@ def generate_graph():
     start_paper = request.args.get("start_paper")
 
     try:
-
         references_dlimit = int(references_dlimit)
-
     except:
-
         print("invalid input to generate graph")
         return "FAIL"
 
