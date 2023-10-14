@@ -2,7 +2,7 @@ import json
 from flask import Flask, request, Response
 from werkzeug.wrappers import Request
 from database_driver import DbDriver
-from ss_caller import get_metadata, search10, get_reference_metadata
+from ss_caller import get_metadata, search10, get_list_of_metadata
 from oai_caller import OaiCaller
 from flask_cors import CORS
 
@@ -62,12 +62,10 @@ def generate_graph():
     next_paper_ids = set()
     for _ in range(references_dlimit):
         for curr_paper_id in curr_paper_ids:
-            new_papers = get_reference_metadata(papers[curr_paper_id]['references'])
+            new_papers = get_list_of_metadata(papers[curr_paper_id]['references'])
             new_papers = {new_paper['paper_id']:new_paper for new_paper in new_papers}
             papers = {**papers, **new_papers}
             for new_paper in new_papers.values():
-                # print(new_paper)
-                # breakpoint()
                 for ref in new_paper['paper_metadata']['references']:
                     if ref not in papers:
                         next_paper_ids.add(ref)

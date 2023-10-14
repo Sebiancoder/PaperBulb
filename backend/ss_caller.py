@@ -111,16 +111,16 @@ def get_reference_metadata_ss(reference_paper_ids: list):
         print("Failure retrieving references")
         return None
 
-def get_reference_metadata(reference_paper_ids: list):
+def get_list_of_metadata(paper_ids: list):
     '''Returns the references of a paper from either the database or semantic scholar'''
-    rec = dbd.batch_fetch_record("paperTable", "paper_id", reference_paper_ids)
+    rec = dbd.batch_fetch_record("paperTable", "paper_id", paper_ids)
     if rec is None:
         print("Error retreiving reference metadata from database")
         return None
-    print(f"Relying on database for {len(rec)} of {len(reference_paper_ids)}, semantic scholar for the rest")
+    print(f"Relying on database for {len(rec)} of {len(paper_ids)}, semantic scholar for the rest")
     # Pull remaining items from semantic scholar
     ids_pulled = [rec_item['paper_id'] for rec_item in rec]
-    papers_to_pull = [p_id for p_id in reference_paper_ids if p_id not in ids_pulled]
+    papers_to_pull = [p_id for p_id in paper_ids if p_id not in ids_pulled]
     # Pull reference metadata from semantic scholar that isn't already in the database
     new_recs = {}
     for p_id in papers_to_pull:
