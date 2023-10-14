@@ -12,8 +12,11 @@ class OaiCaller():
 
     def callModel(self, prompt : str):
 
+        print("prompt")
+        print(prompt)
+
         response = openai.Completion.create(
-            engine="davinci",  # Choose the appropriate engine
+            engine="text-davinci-003",  # Choose the appropriate engine
             prompt=prompt,
             max_tokens=1750  # Maximum number of tokens in the response
         )
@@ -25,7 +28,7 @@ class OaiCaller():
     def getGptSummary(self, abstract : str, ulev : str):
 
         levels = {
-        'ms': "middle school student",
+        'mis': "middle school student",
         'hs': "high school student",
         'bs': "undergraduate college student",
         'ms': "master's student",
