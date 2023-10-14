@@ -65,8 +65,10 @@ def generate_graph():
             new_papers = get_reference_metadata(papers[curr_paper_id]['references'])
             new_papers = {new_paper['paper_id']:new_paper for new_paper in new_papers}
             papers = {**papers, **new_papers}
-            for new_paper in new_papers:
-                for ref in new_paper['references']:
+            for new_paper in new_papers.values():
+                # print(new_paper)
+                # breakpoint()
+                for ref in new_paper['paper_metadata']['references']:
                     if ref not in papers:
                         next_paper_ids.add(ref)
         curr_paper_ids = next_paper_ids
