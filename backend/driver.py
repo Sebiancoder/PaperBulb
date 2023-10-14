@@ -95,7 +95,13 @@ def search_papers():
     '''Returns the 10 most relevant articles for a given query'''
     query = request.args.get("query")
 
-    papers = [get_metadata(paper_id) for paper_id in search10(query)]
+    query_result = search10(query)
+
+    if query_result is None:
+        print("Query search fail")
+        return "FAIL"
+
+    papers = [get_metadata(paper_id) for paper_id in query_result]
 
     return papers if papers is not None else "FAIL"
 

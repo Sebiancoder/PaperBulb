@@ -28,7 +28,7 @@ def search10(query: str):
     try:
         return [paper['paperId'] for paper in requests.get(f"http://api.semanticscholar.org/graph/v1/paper/search?query={query.replace(' ', '+')}", headers={'X-API-KEY': SEMSCHO}).json()['data']]
     except:
-        print("Failure searching 10 most relevant articles")
+        print(f"Failure searching 10 most relevant articles. Query: {query}")
         return None
 
 def download_pdf(url: str):
@@ -76,11 +76,24 @@ def get_citations(paper_id: str):
         print("Failure retrieving citations")
         return None
 
-def get_references(paper_id: str):
-    '''Gets the references of a paper from semantic scholar'''
+def get_reference_paper_ids(paper_id: str):
+    '''Gets the reference ids of a paper from semantic scholar'''
     try:
         response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,references', headers={'X-API-KEY': SEMSCHO}).json()
-        return response['references']
+        return [ref['paperId'] for ref in response['references']]
+    except:
+        print("Failure retrieving reference ids")
+        return None
+
+def get_reference_metadata(reference_paper_ids: list):
+    '''Returns the references of a paper from semanic scholar'''
+    try:
+        response = requests.post(
+            'https://api.semanticscholar.org/graph/v1/paper/batch',
+            params={'fields': 'title,authors,abstract,citations,references,year,journal'},
+            json={"ids": reference_paper_ids}
+        )
+        return response.json()
     except:
         print("Failure retrieving references")
         return None
@@ -112,5 +125,6 @@ def get_metadata(paper_id: str):
     
 
 if __name__ == "__main__":
-    get_metadata("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
+    ggp = get_metadata("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
+    ggt = get_reference_metadata(ggp['references'])
     breakpoint()
