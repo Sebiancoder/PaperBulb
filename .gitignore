@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 
 # keys
-backend/secrets/secrets.py
+backend/secret*
