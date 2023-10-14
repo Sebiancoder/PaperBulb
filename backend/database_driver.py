@@ -55,3 +55,21 @@ class DbDriver():
                 UpdateExpression=update_expression,
                 ExpressionAttributeValues=update_values
             )
+
+    def update_gpt(self, table : str, primary_key : str, primary_key_value, gpt : dict):
+
+        tableObj = self.db_client.Table(table)
+
+        pk_pair = {primary_key: primary_key_value}
+        
+        update_expression = 'SET gpt_summaries = :gpts'
+        update_values = {
+            ':gpts': json_object
+        }
+
+        response = table.update_item(
+                TableName=table_name,
+                Key=pk_pair,
+                UpdateExpression=update_expression,
+                ExpressionAttributeValues=update_values
+            )
