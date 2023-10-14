@@ -92,8 +92,8 @@ def get_reference_metadata(reference_paper_ids: list):
             'https://api.semanticscholar.org/graph/v1/paper/batch',
             params={'fields': 'title,authors,abstract,citations,references,year,journal'},
             json={"ids": reference_paper_ids}
-        )
-        return response.json()
+        ).json()
+        return response
     except:
         print("Failure retrieving references")
         return None
