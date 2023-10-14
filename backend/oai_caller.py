@@ -9,8 +9,11 @@ class OaiCaller():
 
         openai.organization = "org-zVepG3kIxRXl8x7hB7Ro2zKF"
         openai.api_key = f"{OPENAI}"
-        x = openai.Model.list()
 
-    def callModel():
+    def callModel(prompt : str):
 
-
+        response = openai.Completion.create(
+            engine="davinci",  # Choose the appropriate engine
+            prompt=prompt,
+            max_tokens=50  # Maximum number of tokens in the response
+        )

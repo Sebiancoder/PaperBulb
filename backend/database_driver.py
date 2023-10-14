@@ -27,7 +27,11 @@ class DbDriver():
 
         return match_item['json_object']
 
-    def set_record(self, table : str, primary_key : str, primary_key_value : str, json_object : str, gpt_summaries : str):
+    def set_record(self, table : str, primary_key : str, primary_key_value : str, json_object : str, gpt_summaries : str = None):
+
+        if gpt_summaries is None:
+
+            gpt_summaries = "null"
 
         table = self.db_client.Table(table)
         response = table.put_item(

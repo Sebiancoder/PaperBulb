@@ -46,21 +46,30 @@ def generate_graph():
     cb_dlimit = request.args.get("cb_dlim")
     start_paper = request.args.get("start_paper")
 
+    try:
+
+        references_dlimit = int(references_dlimit)
+
+    except:
+
+        print("invalid input to generate graph")
+        return "FAIL"
+
     # Collect all paper metadata, indexed by paper_id
     papers = {}
     curr_paper_ids = {start_paper}
-    next_paper_ids = {}
+    next_paper_ids = set()
     for _ in range(references_dlimit):
         for curr_paper_id in curr_paper_ids:
             if curr_paper_id not in papers:
                 metadata = get_metadata(curr_paper_id)
                 papers[curr_paper_id] = metadata
                 for ref in metadata['references']:
-                    next_paper_ids.add(ref['paperId'])
+                    next_paper_ids.add(ref)
             else:
                 continue
         curr_paper_ids = next_paper_ids
-        next_paper_ids = {}
+        next_paper_ids = set()
 
     return papers
 
