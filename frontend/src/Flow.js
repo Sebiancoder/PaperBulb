@@ -70,7 +70,8 @@ function FlowComponent({ onNodeClick, paperId }) {
                   label: paper.title || 'No title', 
                   abstract: paper.abstract || 'No abstract',
                   authors: paper.authors || 'No authors',
-                  year: paper.year || 'No year'
+                  year: paper.year || 'No year',
+                  paperId: paperId
                 }
               });
               (paper.references || []).forEach(ref => {
@@ -150,7 +151,7 @@ function FlowComponent({ onNodeClick, paperId }) {
   }, [paperId]);
 
   const handleNodeClick = useCallback((event, node) => {
-    // if (node.id === 'default') return;
+    if (node.id === 'default') return;
 
     if (node.type === 'article') {
       const newNodeId = `${node.id}-textbox`;
