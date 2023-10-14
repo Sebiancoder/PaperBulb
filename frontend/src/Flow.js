@@ -197,7 +197,6 @@ function FlowComponent({ onNodeClick, paperId }) {
       nodeTypes={nodeTypes}
       onNodeClick={handleNodeClick}
       nodesDraggable={true} // this is true by default
-
     >
       <MiniMap />
       <Controls />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Flow from './Flow';
 import Search from './Search';
 import LandingPage from './LandingPage';
@@ -10,6 +10,11 @@ function App() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isLandingPage, setIsLandingPage] = useState(true);
   const [selectedPaperId, setSelectedPaperId] = useState(null);
+  const [papers, setPapers] = useState({});
+
+  useEffect(() => {
+    console.log("App's papers updated:", papers);
+  }, [papers]);
 
   const handleNodeClick = (node) => {
     console.log("Node clicked:", node);
@@ -22,13 +27,13 @@ function App() {
   };
 
   if (isLandingPage) {
-    return <LandingPage handleEnterSite={handleEnterSite} />;
+    return <LandingPage handleEnterSite={handleEnterSite} papers={papers} setPapers={setPapers} />;
   }
 
   return (
     <div className="app">
       <div className='toolbar'>
-        <Search />
+        <Search setIsLandingPage={setIsLandingPage} setPapers={setPapers} />
       </div>
 
       <div className="body">
@@ -49,6 +54,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App;

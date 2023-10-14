@@ -2,21 +2,27 @@ import React, { useState } from 'react';
 import { Form, FormControl, Button } from 'react-bootstrap';
 import sendBackendRequest from './sendBackendRequest.js';
 
-function Search({ setPapers }) {
+function Search({ setPapers, setIsLandingPage }) {
     const [searchText, setSearchText] = useState('CNN');
 
     const handleSearch = async (event) => {
         event.preventDefault();
         console.log(`Searching for ${searchText}...`);
-
+    
         try {
             const params = new URLSearchParams({ query: searchText });
             console.log("params:", params.toString());
-            const papersResponse = await sendBackendRequest("search_papers", params.toString());
-            setPapers(papersResponse);
+            const papersResponse = await sendBackendRequest("search_papers", params.toString()); // This line fetches the papers.
+            if (typeof setIsLandingPage === "function") {
+                setIsLandingPage(true);
+            }
+            if (papersResponse) {
+                setPapers(papersResponse);  // This sets the papers in the parent component.
+            }
         } catch (error) {
             console.error("Error fetching papers:", error);
         }
+    
     };
 
     return (
