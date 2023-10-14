@@ -155,12 +155,11 @@ def get_jargon():
             "jargon": jargon
         }
 
-        db_driver.update_record(
+        db_driver.update_gpt(
             table="paperTable",
             primary_key="paper_id",
             primary_key_value=paper,
-            json_object=record["paper_metadata"],
-            gpt_summaries=gptsum_json
+            gpt=gptsum_json
         )
 
         return jargon
@@ -174,12 +173,11 @@ def get_jargon():
 
     gptsums["jargon"] = jargon
 
-    db_driver.update_record(
+    db_driver.update_gpt(
             table="paperTable",
             primary_key="paper_id",
             primary_key_value=paper,
-            json_object=record["paper_metadata"],
-            gpt_summaries=gptsums
+            gpt=gptsums
         )
 
     return jargon
