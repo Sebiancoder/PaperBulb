@@ -30,7 +30,15 @@ def fetch_paper():
 
     return record
 
-""" @app.route('/generate_gpt_summary')
+@app.route('/generate_graph')
+def generate_graph(references_dlimit, cb_dlimit):
+
+    pass
+
+@app.route('/get_gpt_summary')
+def get_gpt_summary():
+
+    pass
 
 @app.route('/load_related_papers')
 
