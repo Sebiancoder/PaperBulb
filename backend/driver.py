@@ -107,7 +107,6 @@ def search_papers():
         return "FAIL"
 
     papers = {paper_id:get_metadata(paper_id) for paper_id in query_result}
-
     return papers if papers is not None else "FAIL"
 
 if __name__ == '__main__':

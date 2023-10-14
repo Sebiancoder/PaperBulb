@@ -10,20 +10,27 @@ const nodeTypes = {
 };
 
 function FlowComponent({ onNodeClick, paperId }) {
-  const [nodes, setNodes] = useNodesState([]);
+  const defaultNode = [{
+    id: 'default',
+    type: 'article',
+    position: { x: 200, y: 200 }, // adjust position to center or wherever you prefer
+    data: { label: 'Search Something and Select a Paper' }
+  }];
+
+  const [nodes, setNodes] = useNodesState(defaultNode);
   const [edges, setEdges] = useEdgesState([]);
 
   const getInitialNodes = async () => {
     try {
         const params = new URLSearchParams({ 
           start_paper: paperId,
-          ref_dlim: 3, // Example depth limit
-          cb_dlim: 2  // Example depth limit for 'cited by'
+          ref_dlim: 1,
+          cb_dlim: 1
         });
         console.log("params:", params.toString());
         const response = await sendBackendRequest("generate_graph", params.toString());
           
-        if(response) {
+        if (response) {
             const nodes = [];
             const edges = [];
             
@@ -32,12 +39,12 @@ function FlowComponent({ onNodeClick, paperId }) {
                 nodes.push({
                     id: paperId,
                     type: 'article',
-                    position: { x: Math.random() * 400, y: Math.random() * 400 }, // random position as an example
+                    position: { x: Math.random() * 400, y: Math.random() * 400 },
                     data: { label: paper.title || 'No title' }
                 });
 
                 (paper.references || []).forEach(ref => {
-                    if (response[ref]) {  // Check if the referenced paper is in the response
+                    if (response[ref]) {
                         edges.push({
                             id: `${paperId}-${ref}`,
                             source: paperId,
@@ -48,7 +55,7 @@ function FlowComponent({ onNodeClick, paperId }) {
                 });
             });
 
-            setNodes(nodes);
+            setNodes(nodes.length ? nodes : defaultNode); // If no nodes were added, revert back to default
             setEdges(edges);
         }
 
@@ -56,8 +63,7 @@ function FlowComponent({ onNodeClick, paperId }) {
     } catch (error) {
         console.error("Error fetching initial nodes:", error);
     }
-};
-
+  };
 
   useEffect(() => {
     if (paperId) {
@@ -66,6 +72,8 @@ function FlowComponent({ onNodeClick, paperId }) {
   }, [paperId]);
 
   const handleNodeClick = useCallback((event, node) => {
+    if (node.id === 'default') return;
+
     if (node.type === 'article') {
       const newNodeId = `${node.id}-textbox`;
       if (!nodes.find(n => n.id === newNodeId)) {
@@ -89,7 +97,6 @@ function FlowComponent({ onNodeClick, paperId }) {
     if (onNodeClick) {
       onNodeClick(node);
     }
-
     return node;
   }, [setNodes, setEdges, nodes, onNodeClick]);
 
@@ -103,8 +110,7 @@ function FlowComponent({ onNodeClick, paperId }) {
 
   return (
     <ReactFlow
-      nodes={nodes.map(node => 
-        node.type === 'textbox' ? { ...node, data: { ...node.data, onRemove: handleRemoveNode } } : node)}
+      nodes={nodes}
       edges={edges}
       nodeTypes={nodeTypes}
       onNodeClick={handleNodeClick}
