@@ -87,7 +87,7 @@ def get_gpt_summary():
 
 @app.route('/search_papers')
 def search_papers():
-
+    '''Returns the 10 most relevant articles for a given query'''
     query = request.args.get("query")
 
     papers = [get_metadata(paper_id) for paper_id in search10(query)]
