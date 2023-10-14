@@ -10,3 +10,4 @@ dependencies:
     - openai
     - flask
     - boto3
+    - PyPDF2
