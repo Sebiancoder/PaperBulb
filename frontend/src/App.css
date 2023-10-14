@@ -89,3 +89,12 @@
     -webkit-line-clamp: 3; /* Limits text to 3 lines */
     -webkit-box-orient: vertical;
 }
+
+.react-flow-container {
+    width: 100%;
+    height: 600px;
+}
+
+.react-flow__node-default textarea {
+    pointer-events: none;
+  }

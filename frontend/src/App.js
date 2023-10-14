@@ -39,9 +39,8 @@ function App() {
           </button>
           {!isCollapsed && selectedNode && (
             <div>
-              <h3>Node Details</h3>
-              <p>ID: {selectedNode?.id}</p>
-              <p>Label: {selectedNode?.data.label}</p>
+              <h3>{selectedNode?.data.label}</h3>
+              <p>{selectedNode?.data.abstract}</p>
             </div>
           )}
         </div>
