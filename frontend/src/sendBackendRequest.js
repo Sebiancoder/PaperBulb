@@ -1,5 +1,5 @@
 // backend url
-const backendUrl = 'http://your-flask-backend.com/api/data';
+const backendUrl = 'we need to figure this out';
 
 // Function to make a request
 function sendBackendRequest() {

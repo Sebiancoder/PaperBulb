@@ -1,25 +1,41 @@
 from flask import Flask, request, Response
+from werkzeug.wrappers import Request
+from database_driver import DbDriver
 
-app = Flask(__name)
+app = Flask("paperbulb")
 
-def driver(next_handler):
-    def drive(request):
+#database object
+db_driver = DbDriver()
+
+class Driver:
+
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        request = Request(environ)
         
-        #before handling
-        response = next_handler(request)
+        return self.app(environ, start_response)
 
-        #after handling
-        return response
+# Define routes
+@app.route('/fetch_paper_info')
+def fetch_paper():
+    
+    record = db_driver.fetch_record(
+        table="paperTable",
+        primary_key="paper_id",
+        primary_key_value='test')
+    
+    print("record")
 
-    return drive
+    return record
 
-# Register the middleware with the app
-app.wsgi_app = drive(app.wsgi_app)
+""" @app.route('/generate_gpt_summary')
 
-# Define your routes
-@app.route('/')
-def home():
-    return "Hello, World!"
+@app.route('/load_related_papers')
+
+@app.route('') """
 
 if __name__ == '__main__':
-    app.run()
+    app.wsgi_app = Driver(app.wsgi_app)
+    app.run(debug=True)
