@@ -85,6 +85,16 @@ def get_reference_paper_ids(paper_id: str):
         print("Failure retrieving reference ids")
         return None
 
+def metadata_cutter(response: dict):
+    title = response['title']
+    authors = response['authors']
+    year = response['year']
+    abstract = response['abstract']
+    journal = response['journal']
+    citations = [cit['paperId'] for cit in response['citations']]
+    references = [ref['paperId'] for ref in response['references']]
+    return {"url":link, "title":title, "authors":authors, "year":year, "abstract":abstract, "citations":citations, "journal":journal, "references":references}
+
 def get_reference_metadata(reference_paper_ids: list):
     '''Returns the references of a paper from semanic scholar'''
     try:
@@ -93,6 +103,7 @@ def get_reference_metadata(reference_paper_ids: list):
             params={'fields': 'title,authors,abstract,citations,references,year,journal'},
             json={"ids": reference_paper_ids}
         ).json()
+        refs = [metadata_cutter(resp) for resp in responses if resp is not None]
         return response
     except:
         print("Failure retrieving references")
@@ -103,14 +114,7 @@ def get_metadata_ss(paper_id: str):
     link = f"https://www.semanticscholar.org/paper/{paper_id}"
     try:
         response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,authors,abstract,citations,references,year,journal', headers={'X-API-KEY': SEMSCHO}).json()
-        title = response['title']
-        authors = response['authors']
-        year = response['year']
-        abstract = response['abstract']
-        journal = response['journal']
-        citations = [cit['paperId'] for cit in response['citations']]
-        references = [ref['paperId'] for ref in response['references']]
-        return {"url":link, "title":title, "authors":authors, "year":year, "abstract":abstract, "citations":citations, "journal":journal, "references":references}
+        return metadata_cutter(response)
     except:
         print("Failure retrieving metadata")
         return None
@@ -127,8 +131,6 @@ def get_metadata(paper_id: str):
     
 
 if __name__ == "__main__":
-    """ ggp = get_metadata("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
+    ggp = get_metadata("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
     ggt = get_reference_metadata(ggp['references'])
-    breakpoint() """
-    rec = get_metadata_ss("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
-    dbd.set_record("paperTable", "paper_id", "0bc975e61002ec29ac67d44d91d35cdbfc56982a", rec)
+    breakpoint()
