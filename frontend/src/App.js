@@ -40,6 +40,7 @@ function App() {
           {!isCollapsed && selectedNode && (
             <div>
               <h3>{selectedNode?.data.label}</h3>
+              <p>{selectedNode?.data.paperId}</p>
               <p>{selectedNode?.data.abstract}</p>
             </div>
           )}
