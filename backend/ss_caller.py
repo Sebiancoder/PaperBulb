@@ -133,7 +133,6 @@ def get_metadata(paper_id: str):
     
 
 if __name__ == "__main__":
-    ggp = get_metadata("1a0912bb76777469295bb2c059faee907e7f3258")
-    # ggp = get_metadata("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
-    # ggt = get_reference_metadata(ggp['references'])
+    ggp = get_metadata("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
+    ggt = get_reference_metadata(ggp['references'])
     breakpoint()
