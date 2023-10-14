@@ -25,7 +25,7 @@ class DbDriver():
 
         match_item = response['Items'][0]
 
-        return match_item['json_obect']
+        return match_item['json_object']
 
     def set_record(self, table : str, primary_key : str, primary_key_value : str, json_object : str):
 

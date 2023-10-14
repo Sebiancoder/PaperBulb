@@ -19,6 +19,9 @@ import urllib.request
 import PyPDF2
 import datetime
 import json
+from database_driver import DbDriver
+
+dbd = DbDriver()
 
 def search10(query: str):
     '''Searches a term in semantic scholar and returns the 10 most relevant articles'''
@@ -82,7 +85,7 @@ def get_references(paper_id: str):
         print("Failure retrieving references")
         return None
 
-def get_metadata(paper_id: str):
+def get_metadata_ss(paper_id: str):
     '''Returns all metadata for the given paper id'''
     link = f"https://www.semanticscholar.org/paper/{paper_id}"
     try:
@@ -99,7 +102,15 @@ def get_metadata(paper_id: str):
         print("Failure retrieving metadata")
         return None
 
+def get_metadata(paper_id: str):
+    '''Returns the metadata for a paper by sourcing it from either the database or from semantic scholar'''
+    rec = dbd.fetch_record("paperTable", "paper_id", paper_id)
+    if rec is None:
+        rec = get_metadata_ss(paper_id)
+        dbd.set_record("paperTable", "paper_id", paper_id, rec)
+    return rec
+    
+
 if __name__ == "__main__":
-    from database_driver import DbDriver
-    dbd = DbDriver()
+    get_metadata("0bc975e61002ec29ac67d44d91d35cdbfc56982a")
     breakpoint()
