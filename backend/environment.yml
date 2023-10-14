@@ -11,3 +11,4 @@ dependencies:
     - flask
     - boto3
     - PyPDF2
+    - wget

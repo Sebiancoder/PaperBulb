@@ -19,5 +19,6 @@ def search10(query: str):
 
 pdf_link = "https://www.researchgate.net/profile/Lu-Lu-51/publication/350158010_Learning_nonlinear_operators_via_DeepONet_based_on_the_universal_approximation_theorem_of_operators/links/607e32a6907dcf667baf49fd/Learning-nonlinear-operators-via-DeepONet-based-on-the-universal-approximation-theorem-of-operators.pdf?_sg%5B0%5D=started_experiment_milestone&_sg%5B1%5D=started_experiment_milestone&origin=journalDetail&_rtd=e30%3D"
 
-
+import wget
+wget.download(pdf_link)
 breakpoint()
