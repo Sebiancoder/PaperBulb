@@ -97,7 +97,7 @@ def metadata_cutter(paper_id: str, response: dict):
     return {"url":link, "title":title, "authors":authors, "year":year, "abstract":abstract, "citations":citations, "journal":journal, "references":references}
 
 def get_reference_metadata_ss(reference_paper_ids: list):
-    '''Returns the references of a paper from semanic scholar'''
+    '''Returns the references of a paper from semantic scholar'''
     try:
         response = requests.post(
             'https://api.semanticscholar.org/graph/v1/paper/batch',
@@ -141,7 +141,7 @@ def get_list_of_metadata(paper_ids: list):
     return rec
 
 def get_metadata_ss(paper_id: str):
-    '''Returns all metadata for the given paper id'''
+    '''Returns all metadata for the given paper id from semantic scholar'''
     try:
         response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,authors,abstract,citations,references,year,journal', headers={'X-API-KEY': SEMSCHO}).json()
         return metadata_cutter(paper_id, response)
