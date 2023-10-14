@@ -1,2 +1,6 @@
 # PaperBulb
-PaperBulb
+PaperBulb (Submission for HackGT X)
+
+PaperBulb is a tool to help undergraduate researchers breaking into a new research field quickly and easily get an understanding of what work has been done in the field. Oftentimes, undergraduate researchers or other new researchers face a barrier that we like to call the "frontier gap". This is the discrepancy between content that is taught in university courses or written about in blogs or otherwise generally commonly discussed, and the frontier of research: what is being looked into at the present by the scientific community. Oftentimes, this gap can only be crossed by a grueling literature review process that involves reading hundreds of papers that may or may not be relevant, by an inexperienced researcher who might be intimidated by the jargon and concepts presented in the paper. '
+
+This is where PaperBulb comes in. PaperBulb aims to present novice researchers with an overlay of a field by visually displaying what knowledge builds on what. It also aims to use AI tools to boil down research papers to a level of understanding that a user might require, as well as provide guidance on what a researcher should study next if they want to understand the paper.
