@@ -56,7 +56,7 @@ def generate_graph():
     try:
         references_dlimit = int(references_dlimit)
         min_year = int(min_year)
-        max_ref_count = int(max_ref_count)
+        n_least_references = int(n_least_references)
         min_num_citations = int(min_num_citations)
     except:
         print("invalid input to generate graph")
@@ -71,10 +71,16 @@ def generate_graph():
             new_papers = get_list_of_metadata(papers[curr_paper_id]['references'])
 
             # Filter
-            new_papers = {key:new_papers[key] for key in new_papers.keys() if new_papers[key]['year'] >= min_year} # Filter old
+            def dec_to_int(dec):
+                if dec is None:
+                    return 0
+                return int(dec)
+            
+            new_papers = {key:new_papers[key] for key in new_papers.keys() if dec_to_int(new_papers[key]['year']) >= min_year} # Filter old
             new_papers = {key:new_papers[key] for key in new_papers.keys() if len(new_papers[key]['citations']) >= min_num_citations} # Filter low citation count articles
-            new_papers = dict(sorted(new_papers.items(), key=lambda item: len(item['references']))[:min(n_least_references, len(new_papers))]) # Select n papers with least references
-
+            ref_count = dict(sorted({key:len(new_papers[key]['references']) for key in new_papers.keys()}.items(), key=lambda item: item[1])[:min(n_least_references, len(new_papers))])
+            new_papers = {key:new_papers[key] for key in new_papers.keys() if key in ref_count} # Select n papers with least references
+            
             papers = {**papers, **new_papers}
             for new_paper in new_papers.values():
                 for ref in new_paper['references']:
