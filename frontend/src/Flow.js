@@ -1,15 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import ReactFlow, { ReactFlowProvider, useNodesState, useEdgesState, MiniMap, Controls, Background } from 'react-flow-renderer';
+import ReactFlow, {PanOnScrollMode, ReactFlowProvider, useNodesState, useEdgesState, MiniMap, Controls, Background } from 'react-flow-renderer';
 import { ArticleNode } from './ArticleNode';
-import TextBoxNode from './TextBoxNode';
 import sendBackendRequest from './sendBackendRequest';
 
 const nodeTypes = {
-  article: ArticleNode,
-  textbox: TextBoxNode
+  article: ArticleNode
 };
 
 function FlowComponent({ onNodeClick, paperId }) {
+  const onLoad = (reactFlowInstance) => {
+    reactFlowInstance.fitView();
+  };
+
   const defaultNode = [{
     id: 'default',
     type: 'article',
@@ -50,8 +52,8 @@ function FlowComponent({ onNodeClick, paperId }) {
           ref_dlim: 1,
           cb_dlim: 1,
           min_year: 1950,
-          min_num_citations: 1001,
-          n_least_references: 5
+          min_num_citations: 500,
+          n_least_references: 10
         });
         const response = await sendBackendRequest("generate_graph", params.toString());
         if (response) {
@@ -154,28 +156,7 @@ function FlowComponent({ onNodeClick, paperId }) {
   }, [paperId]);
 
   const handleNodeClick = useCallback((event, node) => {
-    if (node.id === 'default') return;
-
-    if (node.type === 'article') {
-      const newNodeId = `${node.id}-textbox`;
-      if (!nodes.find(n => n.id === newNodeId)) {
-        const newNode = {
-          id: newNodeId,
-          type: 'textbox',
-          position: { x: node.position.x, y: node.position.y + 100 },
-          data: { label: '', onRemove: handleRemoveNode }
-        };
-        const newEdge = {
-          id: `e${node.id}-${newNodeId}`,
-          source: node.id,
-          target: newNodeId,
-          type: 'simplebezier'
-        };
-
-        setNodes((prevNodes) => [...prevNodes, newNode]);
-        setEdges((prevEdges) => [...prevEdges, newEdge]);
-      }
-    }
+    console.log("Node clicked:", node);
     if (onNodeClick) {
       onNodeClick(node);
     }
@@ -196,7 +177,10 @@ function FlowComponent({ onNodeClick, paperId }) {
       edges={edges}
       nodeTypes={nodeTypes}
       onNodeClick={handleNodeClick}
-      nodesDraggable={true} // this is true by default
+      nodesDraggable={true}
+      onLoad={onLoad}
+      panOnScroll={true}
+      panOnScrollMode={PanOnScrollMode.Horizontal}
     >
       <MiniMap />
       <Controls />

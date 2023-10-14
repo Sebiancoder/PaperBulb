@@ -1,14 +1,21 @@
-body {
-    overflow-y: hidden;
+:root {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: #f5f5f5;
+  overflow: hidden;
 }
+
+
 
 .toolbar {
     width: 100%;
-    height: 100px;
+    height: 50px;
     display: flex; 
     align-items: center; 
     justify-content: flex-start; 
     padding-left: 50px;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1); /* This adds a light bottom shadow */
 }
 
 .app {
@@ -33,41 +40,12 @@ body {
 }
 
 .body {
-    width: 100%;
+    width: 100vw;
     height: 100%;
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: flex-start;
-    padding-top: 20px;
-}
-
-.sidebar {
-    width: 250px; /* or whatever width you want when expanded */
-    width: max-content;
-    height: 100%;
-    background-color: #f5f5f5;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding-top: 20px;
-    padding-left: 20px;
-    transition: width 0.3s ease; /* smooth transition effect */
-    position: absolute;
-    right: 0;
-    z-index: 10;
-}
-
-.sidebar > button {
-    font-size: 50px;
-    background-color: transparent;
-    border: none;
-    align-self: flex-start;
-}
-
-.sidebar.collapsed {
-    width: 40px !important;  /* width when collapsed */
 }
 
 .react-flow-container {
@@ -78,3 +56,20 @@ body {
 .react-flow__node-default textarea {
     pointer-events: none;
   }
+
+.react-flow__minimap {
+    right: auto !important;  /* reset the default right positioning */
+    left: 10px !important;   /* set to left */
+}
+
+.react-flow__controls {
+    bottom: auto !important;  /* reset the default bottom positioning */
+    right: auto !important;   /* reset the default right positioning */
+    top: 10px !important;     /* position from the top */
+    left: 10px !important;   /* position from the left */
+}
+
+.react-flow {
+    width: 100%;
+    height: 100%;
+}
