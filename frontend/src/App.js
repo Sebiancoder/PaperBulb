@@ -35,7 +35,7 @@ function App() {
         <Flow onNodeClick={handleNodeClick} paperId={selectedPaperId} />
         <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
           <button onClick={() => { setIsCollapsed(!isCollapsed) }}>
-            {isCollapsed ? 'Expand' : 'Collapse'}
+            {isCollapsed ? '»' : '«'}
           </button>
           {!isCollapsed && selectedNode && (
             <div>
