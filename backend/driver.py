@@ -2,7 +2,7 @@ import json
 from flask import Flask, request, Response
 from werkzeug.wrappers import Request
 from database_driver import DbDriver
-from ss_caller import get_metadata, search10, get_reference_metadata
+from ss_caller import get_metadata, search10, get_list_of_metadata
 from oai_caller import OaiCaller
 from flask_cors import CORS
 
@@ -62,7 +62,7 @@ def generate_graph():
     next_paper_ids = set()
     for _ in range(references_dlimit):
         for curr_paper_id in curr_paper_ids:
-            new_papers = get_reference_metadata(papers[curr_paper_id]['references'])
+            new_papers = get_list_of_metadata(papers[curr_paper_id]['references'])
             papers = {**papers, **new_papers}
             for new_paper in new_papers.values():
                 for ref in new_paper['references']:
@@ -151,12 +151,11 @@ def get_jargon():
             "jargon": jargon
         }
 
-        db_driver.update_record(
+        db_driver.update_gpt(
             table="paperTable",
             primary_key="paper_id",
             primary_key_value=paper,
-            json_object=record["paper_metadata"],
-            gpt_summaries=gptsum_json
+            gpt=gptsum_json
         )
 
         return jargon
@@ -170,12 +169,11 @@ def get_jargon():
 
     gptsums["jargon"] = jargon
 
-    db_driver.update_record(
+    db_driver.update_gpt(
             table="paperTable",
             primary_key="paper_id",
             primary_key_value=paper,
-            json_object=record["paper_metadata"],
-            gpt_summaries=gptsums
+            gpt=gptsums
         )
 
     return jargon

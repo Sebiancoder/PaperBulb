@@ -112,7 +112,7 @@ class DbDriver():
             ':gpts': gpt
         }
 
-        response = table.update_item(
+        response = tableObj.update_item(
                 TableName=table,
                 Key=pk_pair,
                 UpdateExpression=update_expression,

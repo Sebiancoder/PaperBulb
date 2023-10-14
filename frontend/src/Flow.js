@@ -150,7 +150,7 @@ function FlowComponent({ onNodeClick, paperId }) {
   }, [paperId]);
 
   const handleNodeClick = useCallback((event, node) => {
-    if (node.id === 'default') return;
+    // if (node.id === 'default') return;
 
     if (node.type === 'article') {
       const newNodeId = `${node.id}-textbox`;
