@@ -20,7 +20,9 @@ class DbDriver():
             KeyConditionExpression=Key(primary_key).eq(primary_key_value)
         )
 
-        return response['Items'][0]['json_obect']
+        match_item = response['Items'][0]
+
+        return match_item['json_obect'] if match_item != {} else None
 
     def set_record(self, table : str, primary_key : str, primary_key_value : str, json_object : str):
 

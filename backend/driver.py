@@ -20,29 +20,35 @@ class Driver:
 # Define routes
 @app.route('/fetch_paper_info')
 def fetch_paper():
+
+    paper = request.args.get("paper")
     
     record = db_driver.fetch_record(
         table="paperTable",
         primary_key="paper_id",
-        primary_key_value='test')
+        primary_key_value=paper)
     
     print("record")
 
     return record
 
 @app.route('/generate_graph')
-def generate_graph(references_dlimit, cb_dlimit):
+def generate_graph(start_paper : int):
+    '''
+    references_dlimit - how many levels to search back for references
+    cb_limit - how many levels to search cited by
+    start_paper - paper_id of starting paper (query database to get metadata for this paper)
+    '''
+    references_dlimit = request.args.get("ref_dlim", "")
+    cb_dlimit = request.args.get("cb_dlim", "")
+    start_paper = request.args.get("start_paper", "")
 
     pass
 
 @app.route('/get_gpt_summary')
-def get_gpt_summary():
+def get_gpt_summary(paper : str):
 
     pass
-
-@app.route('/load_related_papers')
-
-@app.route('') """
 
 if __name__ == '__main__':
     app.wsgi_app = Driver(app.wsgi_app)
