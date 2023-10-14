@@ -80,14 +80,49 @@ def get_gpt_summary():
     record = db_driver.fetch_record(
         table="paperTable",
         primary_key="paper_id",
-        primary_key_value=paper,
-        column="gpt_summaries")
+        primary_key_value=paper)
 
     print(record)
 
+    if record is None:
+        return "FAIL"
+
     abstract = record["paper_metadata"]["abstract"]
 
+    if "gpt_summaries" not in record or record["gpt_summaries"] is None:
+
+        generated_summary = oai_caller.getGptSummary(abstract, ulev)
+
+        gptsum_json = {
+            ulev: generated_summary
+        }
+
+        db_driver.update_record(
+            table="paperTable",
+            primary_key="paper_id",
+            primary_key_value=paper,
+            json_object=record["paper_metadata"],
+            gpt_summaries=gptsum_json
+        )
+
+        return generated_summary
+
+    gptsums = record["gpt_summaries"]
+
+    if ulev in gptsums:
+        return gptsums[ulev]
+
     generated_summary = oai_caller.getGptSummary(abstract, ulev)
+
+    gptsums[ulev] = generated_summary
+
+    db_driver.update_record(
+            table="paperTable",
+            primary_key="paper_id",
+            primary_key_value=paper,
+            json_object=record["paper_metadata"],
+            gpt_summaries=gptsums
+        )
 
     return generated_summary
 
