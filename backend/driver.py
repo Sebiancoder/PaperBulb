@@ -49,9 +49,15 @@ def generate_graph():
     references_dlimit = request.args.get("ref_dlim")
     cb_dlimit = request.args.get("cb_dlim")
     start_paper = request.args.get("start_paper")
+    min_year = request.args.get("min_year")
+    max_ref_count = request.args.get("max_ref_count")
+    n_most_cited = request.arrgs.get("n_most_cited")
 
     try:
         references_dlimit = int(references_dlimit)
+        min_year = int(min_year)
+        max_ref_count = int(max_ref_count)
+        min_num_citations = int(min_num_citations)
     except:
         print("invalid input to generate graph")
         return "FAIL"
@@ -63,6 +69,12 @@ def generate_graph():
     for _ in range(references_dlimit):
         for curr_paper_id in curr_paper_ids:
             new_papers = get_list_of_metadata(papers[curr_paper_id]['references'])
+
+            # Filter
+            new_papers = {key:new_papers[key] for key in new_papers.keys() if new_papers[key]['year'] >= min_year} # Filter old
+            new_papers = {key:new_papers[key] for key in new_papers.keys() if len(new_papers[key]['references']) <= max_ref_count} # Filter high reference count articles
+            new_papers = dict(sorted(new_papers.items(), key=lambda item: len(item['citations']))[-min(n_most_cited, len(new_papers)):]) # Select n most-referenced
+
             papers = {**papers, **new_papers}
             for new_paper in new_papers.values():
                 for ref in new_paper['references']:
