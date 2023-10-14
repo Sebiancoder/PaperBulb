@@ -10,7 +10,7 @@ function Search({ setPapers }) {
         console.log(`Searching for ${searchText}...`);
 
         try {
-            const params = await new URLSearchParams({ query: searchText });
+            const params = new URLSearchParams({ query: searchText });
             console.log("params:", params.toString());
             const papersResponse = await sendBackendRequest("search_papers", params.toString());
             setPapers(papersResponse);
