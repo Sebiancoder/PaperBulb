@@ -30,7 +30,7 @@ def fetch_paper():
     record = db_driver.fetch_record(
         table="paperTable",
         primary_key="paper_id",
-        primary_key_value=paper)
+        primary_key_value=paper)["paper_metadata"]
     
     print("record")
     print(record.keys())
@@ -82,11 +82,16 @@ def get_gpt_summary():
     record = db_driver.fetch_record(
         table="paperTable",
         primary_key="paper_id",
-        primary_key_value=paper)
+        primary_key_value=paper,
+        column="gpt_summaries")
 
-    abstract = record["abstract"]
+    print(record)
 
-    return oai_caller.getGptSummary(abstract, ulev)
+    abstract = record["paper_metadata"]["abstract"]
+
+    generated_summary = oai_caller.getGptSummary(abstract, ulev)
+
+    return generated_summary
 
 @app.route('/search_papers')
 def search_papers():

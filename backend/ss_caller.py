@@ -117,7 +117,7 @@ def get_metadata_ss(paper_id: str):
 
 def get_metadata(paper_id: str):
     '''Returns the metadata for a paper by sourcing it from either the database or from semantic scholar'''
-    rec = dbd.fetch_record("paperTable", "paper_id", paper_id)
+    rec = dbd.fetch_record("paperTable", "paper_id", paper_id)["paper_metadata"]
     if rec is None:
         rec = get_metadata_ss(paper_id)
         dbd.set_record("paperTable", "paper_id", paper_id, rec)
