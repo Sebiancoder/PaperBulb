@@ -27,6 +27,20 @@ class DbDriver():
 
         return match_item
 
+    def batch_fetch_record(self, table: str, primary_key: str, primary_key_values: list):
+        query_dict = {
+            table: {
+                'Keys': [{primary_key: val} for val in primary_key_values]
+            }
+        }
+        response = self.db_client.batch_get_item(
+            RequestItems=query_dict
+        )
+
+        match_item = response['Responses'][table]
+
+        return match_item
+
     def update_record(self, table : str, primary_key : str, primary_key_value : str, json_object : str, gpt_summaries : str = None):
 
         table_name = table
@@ -56,6 +70,37 @@ class DbDriver():
                 ExpressionAttributeValues=update_values
             )
 
+    def batch_update_record(self, table : str, primary_key : str, primary_key_values : list, json_objects : list, gpt_summaries : list = None):
+        if gpt_summaries is None:
+            query_dict = {
+                table: [{
+                    'PutRequest': {
+                        'Item': {
+                            'paper_id': primary_key_values[idx],
+                            'paper_metadata':json_objects[idx]
+                        }
+                    }
+                } for idx in range(len(primary_key_values))]
+            }
+            response = self.db_client.batch_write_item(
+                RequestItems=query_dict
+            )
+        else:
+            query_dict = {
+                table: [{
+                    'PutRequest': {
+                        'Item': {
+                            'paper_id': primary_key_values[idx],
+                            'paper_metadata':json_objects[idx],
+                            'gpt_summaries':gpt_summaries[idx]
+                        }
+                    }
+                } for idx in range(len(primary_key_values))]
+            }
+            response = self.db_client.batch_write_item(
+                RequestItems=query_dict
+            )
+
     def update_gpt(self, table : str, primary_key : str, primary_key_value, gpt : dict):
 
         tableObj = self.db_client.Table(table)
@@ -72,4 +117,5 @@ class DbDriver():
                 Key=pk_pair,
                 UpdateExpression=update_expression,
                 ExpressionAttributeValues=update_values
-            )
+
+    

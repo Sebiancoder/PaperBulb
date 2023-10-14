@@ -57,7 +57,7 @@ def generate_graph():
         return "FAIL"
 
     # Collect all paper metadata, indexed by paper_id
-    papers = {get_metadata(start_paper)}
+    papers = {start_paper: get_metadata(start_paper)}
     curr_paper_ids = {start_paper}
     next_paper_ids = set()
     for _ in range(references_dlimit):
