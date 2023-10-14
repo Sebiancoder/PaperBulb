@@ -17,3 +17,5 @@ class OaiCaller():
             prompt=prompt,
             max_tokens=50  # Maximum number of tokens in the response
         )
+
+        return response.choices[0].text

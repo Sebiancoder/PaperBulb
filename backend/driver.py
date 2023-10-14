@@ -3,11 +3,13 @@ from flask import Flask, request, Response
 from werkzeug.wrappers import Request
 from database_driver import DbDriver
 from ss_caller import get_metadata, search10
+from oai_caller import OaiCaller
 
 app = Flask("paperbulb")
 
 #database object
 db_driver = DbDriver()
+oai_caller = OaiCaller()
 
 class Driver:
 
@@ -75,6 +77,7 @@ def generate_graph():
 def get_gpt_summary():
 
     paper = request.args.get("paper")
+    understanding_level = request.args.get("ulev")
 
     record = db_driver.fetch_record(
         table="paperTable",
@@ -83,7 +86,9 @@ def get_gpt_summary():
 
     abstract = record["abstract"]
 
-    return abstract
+    prompt = abstract + "Rewrite the previous so as to make it understandable by a " + ulev
+
+    return oai_caller.callModel(prompt)
 
 @app.route('/search_papers')
 def search_papers():
