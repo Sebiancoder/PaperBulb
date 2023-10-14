@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Search from './Search';
+import './LandingPage.css';
 
 const LandingPage = ({ handleEnterSite }) => {
     const [papers, setPapers] = useState({});
@@ -7,7 +8,9 @@ const LandingPage = ({ handleEnterSite }) => {
 
     return (
         <div>
-            <Search setPapers={setPapers} />
+            <div className='search-container'>
+                <Search setPapers={setPapers}/>
+            </div>
             <div className="papers-grid">
                 {Object.entries(papers).map(([paperId, paperMetadata], index) => (
                     <div key={paperId} className="paper" onClick={() => handleEnterSite(paperId)}>
@@ -16,7 +19,6 @@ const LandingPage = ({ handleEnterSite }) => {
                     </div>
                 ))}
             </div>
-            <button onClick={handleEnterSite}>Enter</button>
         </div>
     );
 };
