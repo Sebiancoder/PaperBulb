@@ -12,16 +12,21 @@ class DbDriver():
 
         self.db_client = self.session.resource('dynamodb', region_name='us-east-1')
 
-    def fetch_record(primary_key : str):
+    def fetch_record(table : str, primary_key : str, primary_key_value : str):
     
+        table = dynamodb.Table(table)
+        response = table.query(
+            KeyConditionExpression=Key(primary_key).eq(primary_key_value)
+        )
 
-    def set_record(primary_key : str, json_object : str):
+        return response['Items'][0]['json_object']
 
-        table = dynamodb.Table('paperTable')
+    def set_record(table : str, primary_key : str, primary_key_value : str, json_object : str):
+
+        table = dynamodb.Table(table)
         response = table.put_item(
-        Item={
-            'PrimaryKeyName': 'Value1',
-            'SortKeyName': 42,
-            'OtherAttribute': 'OtherValue'
-        }
-)
+            Item={
+                primary_key: primary_key_value,
+                'json_obect': json_object
+                }
+        )
