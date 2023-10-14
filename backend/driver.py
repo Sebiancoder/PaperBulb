@@ -126,6 +126,58 @@ def get_gpt_summary():
 
     return generated_summary
 
+@app.route('/get_jargon')
+def get_jargon():
+
+    paper = request.args.get("paper")
+
+    record = db_driver.fetch_record(
+        table="paperTable",
+        primary_key="paper_id",
+        primary_key_value=paper)
+
+    if record is None:
+        return "FAIL"
+
+    abstract = record["paper_metadata"]["abstract"]
+
+    if "gpt_summaries" not in record or record["gpt_summaries"] is None:
+
+        jargon = oai_caller.getJargon(abstract)
+
+        gptsum_json = {
+            "jargon": jargon
+        }
+
+        db_driver.update_record(
+            table="paperTable",
+            primary_key="paper_id",
+            primary_key_value=paper,
+            json_object=record["paper_metadata"],
+            gpt_summaries=gptsum_json
+        )
+
+        return jargon
+
+    gptsums = record["gpt_summaries"]
+
+    if "jargon" in gptsums:
+        return gptsums["jargon"]
+
+    jargon = oai_caller.getJargon(abstract)
+
+    gptsums["jargon"] = jargon
+
+    db_driver.update_record(
+            table="paperTable",
+            primary_key="paper_id",
+            primary_key_value=paper,
+            json_object=record["paper_metadata"],
+            gpt_summaries=gptsums
+        )
+
+    return jargon
+
 @app.route('/search_papers')
 def search_papers():
     '''Returns the 10 most relevant articles for a given query'''

@@ -38,3 +38,17 @@ class OaiCaller():
         prompt = abstract + "Rewrite the previous so as to make it understandable by a " + levels[ulev]
 
         return self.callModel(prompt)
+
+    def getJargon(self, abstract : str):
+
+        prompt = abstract + "Provide a comma separated list of words in the previous paragraph that would be considered jargon specific to the field. Do not write anything else but the comma-separated list.Do not put a period at the end"
+
+        model_output = self.callModel(prompt)
+
+        cleaned_mo = model_output.replace(".","").replace("\n","").split(",")
+
+        for i in range(len(cleaned_mo)):
+
+            cleaned_mo[i] = cleaned_mo[i].strip()
+
+        return cleaned_mo
