@@ -1,0 +1,11 @@
+name: paperbulb
+
+dependencies:
+  - python==3.10
+  - pytorch
+  - matplotlib
+  - pandas
+  - numpy
+  - scikit-learn
+  - pip:
+    - openai==4.0.0

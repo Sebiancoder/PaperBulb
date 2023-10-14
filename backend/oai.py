@@ -1,0 +1,1 @@
+from secrets.secrets import OPENAI, SEMSCHO
