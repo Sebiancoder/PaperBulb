@@ -119,14 +119,14 @@ def get_reference_metadata(reference_paper_ids: list):
         return None
     print(f"Relying on database for {len(rec)} of {len(reference_paper_ids)}, semantic scholar for the rest")
     # Pull remaining items from semantic scholar
-    ids_pulled = [rec_item['paper_id'] for rec_item in rec]
+    ids_pulled = [*rec.keys()]
     papers_to_pull = [p_id for p_id in reference_paper_ids if p_id not in ids_pulled]
     # Pull reference metadata from semantic scholar that isn't already in the database
     new_recs = {}
     for p_id in papers_to_pull:
         new_rec = get_metadata_ss(p_id)
         new_recs[p_id] = new_rec
-        rec.append(new_rec)
+        rec[p_id] = new_rec
         print("Paper done")
 
     # batch push
