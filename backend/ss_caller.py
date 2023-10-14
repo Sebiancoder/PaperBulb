@@ -1,3 +1,16 @@
+'''
+Credit for API: Semantic Scholar
+
+@article{Kinney2023TheSS,
+  title={The Semantic Scholar Open Data Platform},
+  author={Rodney Michael Kinney and Chloe Anastasiades and Russell Authur and Iz Beltagy and Jonathan Bragg and Alexandra Buraczynski and Isabel Cachola and Stefan Candra and Yoganand Chandrasekhar and Arman Cohan and Miles Crawford and Doug Downey and Jason Dunkelberger and Oren Etzioni and Rob Evans and Sergey Feldman and Joseph Gorney and David W. Graham and F.Q. Hu and Regan Huff and Daniel King and Sebastian Kohlmeier and Bailey Kuehl and Michael Langan and Daniel Lin and Haokun Liu and Kyle Lo and Jaron Lochner and Kelsey MacMillan and Tyler Murray and Christopher Newell and Smita R Rao and Shaurya Rohatgi and Paul L Sayre and Zejiang Shen and Amanpreet Singh and Luca Soldaini and Shivashankar Subramanian and A. Tanaka and Alex D Wade and Linda M. Wagner and Lucy Lu Wang and Christopher Wilhelm and Caroline Wu and Jiangjiang Yang and Angele Zamarron and Madeleine van Zuylen and Daniel S. Weld},
+  journal={ArXiv},
+  year={2023},
+  volume={abs/2301.10140},
+  url={https://api.semanticscholar.org/CorpusID:256194545}
+}
+'''
+
 from secrets.secrets import SEMSCHO
 import os
 import openai
@@ -69,4 +82,5 @@ def get_references(paper_id: str):
         print("Failure retrieving references")
         return None
 
-breakpoint()
+if __name__ == "__main__":
+    breakpoint()
