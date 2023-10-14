@@ -68,7 +68,9 @@ def generate_graph():
     next_paper_ids = set()
     for _ in range(references_dlimit):
         for curr_paper_id in curr_paper_ids:
-            new_papers = get_list_of_metadata(papers[curr_paper_id]['references'])
+            # Find next papers that haven't already been discovered
+            next_refs = [val for val in papers[curr_paper_id]['references'] if val not in papers]
+            new_papers = get_list_of_metadata(next_refs)
 
             # Filter
             def dec_to_int(dec):
@@ -80,7 +82,7 @@ def generate_graph():
             new_papers = {key:new_papers[key] for key in new_papers.keys() if len(new_papers[key]['citations']) >= min_num_citations} # Filter low citation count articles
             ref_count = dict(sorted({key:len(new_papers[key]['references']) for key in new_papers.keys()}.items(), key=lambda item: item[1])[:min(n_least_references, len(new_papers))])
             new_papers = {key:new_papers[key] for key in new_papers.keys() if key in ref_count} # Select n papers with least references
-            
+
             papers = {**papers, **new_papers}
             for new_paper in new_papers.values():
                 for ref in new_paper['references']:
