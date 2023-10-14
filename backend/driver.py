@@ -51,7 +51,7 @@ def generate_graph():
     start_paper = request.args.get("start_paper")
     min_year = request.args.get("min_year")
     max_ref_count = request.args.get("max_ref_count")
-    n_most_cited = request.arrgs.get("n_most_cited")
+    n_most_cited = request.args.get("n_most_cited")
 
     try:
         references_dlimit = int(references_dlimit)

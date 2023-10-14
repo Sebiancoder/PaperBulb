@@ -48,7 +48,10 @@ function FlowComponent({ onNodeClick, paperId }) {
         const params = new URLSearchParams({ 
           start_paper: paperId,
           ref_dlim: 1,
-          cb_dlim: 1
+          cb_dlim: 1,
+          min_year: 1950,
+          max_ref_count: 25,
+          n_most_cited: 5
         });
         const response = await sendBackendRequest("generate_graph", params.toString());
         if (response) {
