@@ -50,8 +50,8 @@ def generate_graph():
     cb_dlimit = request.args.get("cb_dlim")
     start_paper = request.args.get("start_paper")
     min_year = request.args.get("min_year")
-    max_ref_count = request.args.get("max_ref_count")
-    n_most_cited = request.args.get("n_most_cited")
+    min_num_citations = request.args.get("min_num_citations")
+    n_least_references = request.args.get("n_least_references")
 
     try:
         references_dlimit = int(references_dlimit)
@@ -72,8 +72,8 @@ def generate_graph():
 
             # Filter
             new_papers = {key:new_papers[key] for key in new_papers.keys() if new_papers[key]['year'] >= min_year} # Filter old
-            new_papers = {key:new_papers[key] for key in new_papers.keys() if len(new_papers[key]['references']) <= max_ref_count} # Filter high reference count articles
-            new_papers = dict(sorted(new_papers.items(), key=lambda item: len(item['citations']))[-min(n_most_cited, len(new_papers)):]) # Select n most-referenced
+            new_papers = {key:new_papers[key] for key in new_papers.keys() if len(new_papers[key]['citations']) >= min_num_citations} # Filter low citation count articles
+            new_papers = dict(sorted(new_papers.items(), key=lambda item: len(item['references']))[:min(n_least_references, len(new_papers))]) # Select n papers with least references
 
             papers = {**papers, **new_papers}
             for new_paper in new_papers.values():
