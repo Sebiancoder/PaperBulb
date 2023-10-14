@@ -100,4 +100,6 @@ def get_metadata(paper_id: str):
         return None
 
 if __name__ == "__main__":
+    from database_driver import DbDriver
+    dbd = DbDriver()
     breakpoint()
