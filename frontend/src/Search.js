@@ -7,9 +7,16 @@ function Search({ setPapers }) {
 
     const handleSearch = async (event) => {
         event.preventDefault();
-        console.log(`Searching for ${searchText}`);
-        const papersResponse = await sendBackendRequest(searchText);
-        setPapers(papersResponse);
+        console.log(`Searching for ${searchText}...`);
+
+        try {
+            const params = await new URLSearchParams({ query: searchText });
+            console.log("params:", params.toString());
+            const papersResponse = await sendBackendRequest("search_papers", params.toString());
+            setPapers(papersResponse);
+        } catch (error) {
+            console.error("Error fetching papers:", error);
+        }
     };
 
     return (

@@ -13,3 +13,4 @@ dependencies:
     - PyPDF2
     - wget
     - urllib3<2
+    - flask_cors

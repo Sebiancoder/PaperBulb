@@ -1,12 +1,9 @@
-// backend url
-const backendUrl = 'we need to figure this out';
+const backendUrl = "http://127.0.0.1:5000/";
 
-// Function to make a request
 function sendBackendRequest(endpoint, args, the_rest) {
+  const apiUrl = backendUrl + endpoint + "?" + the_rest;
 
-  apiUrl = backendUrl + endpoint + "?" + the_rest
-
-  fetch(apiUrl)
+  return fetch(apiUrl)
     .then((response) => {
       if (!response.ok) {
         throw new Error('Request failed');
@@ -14,13 +11,16 @@ function sendBackendRequest(endpoint, args, the_rest) {
       return response.json();
     })
     .then((data) => {
-      // Process the data returned by the Flask backend
       console.log('Backend request successful');
+      return data; // Returning the fetched data
     })
     .catch((error) => {
       console.error('Error:', error);
+      throw error;
     });
 }
+
+export default sendBackendRequest; // Exporting the function as default
 
 
 
