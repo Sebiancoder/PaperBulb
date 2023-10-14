@@ -74,7 +74,7 @@ def get_gpt_summary():
         primary_key="paper_id",
         primary_key_value=paper)
 
-    abstract = json.loads(records)["abstract"]
+    abstract = record["abstract"]
 
     return abstract
 
