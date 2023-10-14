@@ -15,7 +15,8 @@ const initialNodes = [
 
 const initialEdges = [{ id: 'e1-2', source: '1', target: '2', type: 'simplebezier' }];
 
-function FlowComponent({ onNodeClick}) {
+function FlowComponent({ onNodeClick, paperId }) {
+  console.log("paperId:", paperId);
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges] = useEdgesState(initialEdges);
 
@@ -70,10 +71,10 @@ function FlowComponent({ onNodeClick}) {
   );
 }
 
-export default function Flow({ onNodeClick }) {
+export default function Flow({ onNodeClick, paperId }) {
   return (
     <ReactFlowProvider>
-      <FlowComponent onNodeClick={onNodeClick} />
+      <FlowComponent onNodeClick={onNodeClick} paperId={paperId} />
     </ReactFlowProvider>
   );
 }

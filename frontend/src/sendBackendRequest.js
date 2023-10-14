@@ -1,6 +1,6 @@
 const backendUrl = "http://127.0.0.1:5000/";
 
-function sendBackendRequest(endpoint, args, the_rest) {
+function sendBackendRequest(endpoint, the_rest) {
   const apiUrl = backendUrl + endpoint + "?" + the_rest;
 
   return fetch(apiUrl)

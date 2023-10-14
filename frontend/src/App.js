@@ -8,14 +8,16 @@ import 'react-flow-renderer/dist/style.css';
 function App() {
   const [selectedNode, setSelectedNode] = useState(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isLandingPage, setIsLandingPage] = useState(true);  // Step 1
+  const [isLandingPage, setIsLandingPage] = useState(true);
+  const [selectedPaperId, setSelectedPaperId] = useState(null);
 
   const handleNodeClick = (node) => {
     console.log("Node clicked:", node);
     setSelectedNode(node);
   };
 
-  const handleEnterSite = () => {   // Step 4
+  const handleEnterSite = (paperId) => {
+    setSelectedPaperId(paperId);
     setIsLandingPage(false);
   };
 
@@ -30,7 +32,7 @@ function App() {
       </div>
 
       <div className="body">
-        <Flow onNodeClick={handleNodeClick} />
+        <Flow onNodeClick={handleNodeClick} paperId={selectedPaperId} />
         <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
           <button onClick={() => { setIsCollapsed(!isCollapsed) }}>
             {isCollapsed ? 'Expand' : 'Collapse'}
@@ -47,5 +49,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;

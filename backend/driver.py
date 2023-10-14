@@ -4,8 +4,10 @@ from werkzeug.wrappers import Request
 from database_driver import DbDriver
 from ss_caller import get_metadata, search10
 from oai_caller import OaiCaller
+from flask_cors import CORS
 
 app = Flask("paperbulb")
+CORS(app)
 
 #database object
 db_driver = DbDriver()
@@ -101,7 +103,7 @@ def search_papers():
         print("Query search fail")
         return "FAIL"
 
-    papers = [get_metadata(paper_id) for paper_id in query_result]
+    papers = {paper_id:get_metadata(paper_id) for paper_id in query_result}
 
     return papers if papers is not None else "FAIL"
 
