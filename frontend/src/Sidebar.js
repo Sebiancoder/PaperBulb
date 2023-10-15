@@ -98,9 +98,9 @@ function Sidebar({ isCollapsed, setIsCollapsed, selectedNode }) {
             valueLabelDisplay="auto"
             max={80}
           />
-          <p>{isLoading ? 'Loading...' : (simplifiedAbstract || selectedNode?.data.abstract)}</p>
-
-          {/* Displaying keywords */}
+          <p>{isLoading ? (
+            <p style={{marginBottom: '500px'}}>Loading...</p>
+          ) : (simplifiedAbstract || selectedNode?.data.abstract)}</p>
           <div>
             <h5>Keywords:</h5>
             <ul>

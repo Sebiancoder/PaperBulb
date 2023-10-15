@@ -6,7 +6,6 @@ import Sidebar from './Sidebar';
 import './App.css';
 import 'react-flow-renderer/dist/style.css';
 
-
 function App() {
   const [selectedNode, setSelectedNode] = useState(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -21,6 +20,9 @@ function App() {
   const handleNodeClick = (node) => {
     console.log("Node clicked:", node);
     setSelectedNode(node);
+
+    // Open the sidebar when a node is clicked
+    setIsCollapsed(false);
   };
 
   const handleEnterSite = (paperId) => {
@@ -42,7 +44,6 @@ function App() {
         <Flow onNodeClick={handleNodeClick} paperId={selectedPaperId} />
         <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} selectedNode={selectedNode} />
       </div>
-
     </div>
   );
 }
