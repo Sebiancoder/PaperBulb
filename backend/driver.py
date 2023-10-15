@@ -24,6 +24,10 @@ class Driver:
         
         return self.app(environ, start_response)
 
+@app.route("/")
+def healthCheck():
+    return "Success"
+
 # Define routes
 @app.route('/fetch_paper_info')
 def fetch_paper():
@@ -274,5 +278,6 @@ def search_papers():
     return papers if papers is not None else "FAIL"
 
 if __name__ == '__main__':
-    app.wsgi_app = Driver(app.wsgi_app)
-    app.run(debug=True)
+    #app.wsgi_app = Driver(app.wsgi_app)
+    print("running")
+    app.run(debug=True, host='0.0.0.0')
