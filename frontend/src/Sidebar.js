@@ -3,6 +3,7 @@ import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 import sendBackendRequest from './sendBackendRequest';
 import './Sidebar.css';
+import { select } from 'd3-selection';
 
 function Sidebar({ isCollapsed, setIsCollapsed, selectedNode }) {
   const [currentLevel, setCurrentLevel] = React.useState(80);
@@ -33,10 +34,10 @@ function Sidebar({ isCollapsed, setIsCollapsed, selectedNode }) {
         const params = new URLSearchParams({ paper: selectedNode?.data.paperId, ulev: selectedLevel });
         const response = await sendBackendRequest("get_gpt_summary", params.toString());
     
-        console.log("Response from get_gpt_summary:", response["choices"][0].text);
+        console.log("Response from get_gpt_summary:", response[selectedLevel]);
     
         if (response) {
-          setSimplifiedAbstract(response["choices"][0].text);
+          setSimplifiedAbstract(response[selectedLevel]);
         }
       } catch (error) {
         console.error("Error fetching simplified abstract:", error);
@@ -52,10 +53,15 @@ function Sidebar({ isCollapsed, setIsCollapsed, selectedNode }) {
   React.useEffect(() => {
     const fetchKeywords = async () => {
       try {
-        const params = new URLSearchParams({ abstract: selectedNode?.data.abstract });
+        const params = new URLSearchParams({ paper: selectedNode?.data.paperId });
         const response = await sendBackendRequest("get_jargon", params.toString());
         if (response && response.jargon) {
           setKeywords(response.jargon);
+        }
+        const params2 = new URLSearchParams({ paper: selectedNode?.data.paperId });
+        const response2 = await sendBackendRequest("learn_more", params2.toString());
+        if (response2 && response2.learn_more) {
+          setKeywords(response.learn_more);
         }
       } catch (error) {
         console.error("Error fetching keywords:", error);
@@ -103,11 +109,11 @@ function Sidebar({ isCollapsed, setIsCollapsed, selectedNode }) {
           ) : (simplifiedAbstract || selectedNode?.data.abstract)}</p>
           <div>
             <h5>Keywords:</h5>
-            <ul>
+            {/* <ul>
               {keywords.map((keyword, index) => (
                 <li key={index}>{keyword}</li>
               ))}
-            </ul>
+            </ul> */}
           </div>
         </div>
       )}

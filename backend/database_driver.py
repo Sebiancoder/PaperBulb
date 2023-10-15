@@ -15,9 +15,10 @@ class DbDriver():
 
     def fetch_record(self, table : str, primary_key : str, primary_key_value : str):
     
-        table = self.db_client.Table(table)
-        response = table.query(
-            KeyConditionExpression=Key(primary_key).eq(primary_key_value)
+        table_obj = self.db_client.Table(table)
+        response = table_obj.query(
+            KeyConditionExpression=f'{primary_key} = :xd',
+            ExpressionAttributeValues={':xd': primary_key_value}
         )
 
         if len(response['Items']) == 0:
@@ -119,9 +120,7 @@ class DbDriver():
                 ExpressionAttributeValues=update_values)
 
     def update_learn_more(self, table : str, primary_key : str, primary_key_value, more : dict):
-
         tableObj = self.db_client.Table(table)
-
         pk_pair = {primary_key: primary_key_value}
         
         update_expression = 'SET learn_more = :more'

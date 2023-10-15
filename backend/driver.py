@@ -103,14 +103,16 @@ def get_gpt_summary():
     record = db_driver.fetch_record(
         table="paperTable",
         primary_key="paper_id",
-        primary_key_value=paper)
-
-    print(record)
+        primary_key_value=paper
+    )
 
     if record is None:
+        print("RECORD FAIL")
         return "FAIL"
 
     abstract = record["paper_metadata"]["abstract"]
+    if abstract is None:
+        breakpoint()
 
     if "gpt_summaries" not in record or record["gpt_summaries"] is None:
 
@@ -128,12 +130,12 @@ def get_gpt_summary():
             gpt_summaries=gptsum_json
         )
 
-        return generated_summary
+        return gptsum_json
 
     gptsums = record["gpt_summaries"]
 
     if ulev in gptsums:
-        return gptsums[ulev]
+        return gptsums
 
     generated_summary = oai_caller.getGptSummary(abstract, ulev)
 
@@ -147,7 +149,8 @@ def get_gpt_summary():
             gpt_summaries=gptsums
         )
 
-    return generated_summary
+    print(gptsums)
+    return gptsums
 
 @app.route('/get_jargon')
 def get_jargon():
@@ -164,6 +167,8 @@ def get_jargon():
         return "FAIL"
 
     abstract = record["paper_metadata"]["abstract"]
+    if abstract is None:
+        breakpoint()
 
     if "gpt_summaries" not in record or record["gpt_summaries"] is None:
 
@@ -180,12 +185,12 @@ def get_jargon():
             gpt=gptsum_json
         )
 
-        return jargon
+        return gptsum_json
 
     gptsums = record["gpt_summaries"]
 
     if "jargon" in gptsums:
-        return gptsums["jargon"]
+        return gptsums
 
     jargon = oai_caller.getJargon(abstract)
 
@@ -198,7 +203,7 @@ def get_jargon():
             gpt=gptsums
         )
 
-    return jargon
+    return gptsums
 
 @app.route('/learn_more')
 def learn_more():
@@ -214,22 +219,42 @@ def learn_more():
     if record is None:
         return "FAIL"
     
-    if "learn_more" not in record or record["learn_more"] is None:
+    abstract = record["paper_metadata"]["abstract"]
+    
+    if "gpt_summaries" not in record or record["gpt_summaries"] is None:
 
-        more = oai_caller.learn_more(record['abstract'])
+        more = oai_caller.learn_more(abstract)
 
-        more_json = {
-            "more": more
+        gptsum_json = {
+            "learn_more": more
         }
 
-        db_driver.update_learn_more(
+        db_driver.update_gpt(
             table="paperTable",
             primary_key="paper_id",
             primary_key_value=paper,
-            more=more_json
+            gpt=gptsum_json
         )
 
-        return more
+        return gptsum_json
+
+    gptsums = record["gpt_summaries"]
+
+    if "learn_more" in gptsums:
+        return gptsums
+
+    more = oai_caller.learn_more(abstract)
+
+    gptsums["learn_more"] = more
+
+    db_driver.update_gpt(
+        table="paperTable",
+        primary_key="paper_id",
+        primary_key_value=paper,
+        gpt=gptsums
+    )
+
+    return gptsums
 
 @app.route('/search_papers')
 def search_papers():

@@ -43,21 +43,22 @@ class OaiCaller():
         return self.callModel(prompt)
 
     def getJargon(self, abstract : str):
-        prompt = abstract + "Provide a comma separated list of words in the previous paragraph that would be considered jargon specific to the field. Do not write anything else but the comma-separated list. Do not put a period at the end"
+        prompt = abstract + "\n\nProvide a comma separated list of words in the previous paragraph that would be considered jargon specific to the field. Do not write anything else but the comma-separated list. Do not put a period at the end"
         model_output = self.callModel(prompt)
         cleaned_mo = model_output.replace(".","").replace("\n","").split(",")
         for i in range(len(cleaned_mo)):
             cleaned_mo[i] = cleaned_mo[i].strip()
-        return cleaned_mo
+        cleaned_mo = "- " + "\n- ".join(cleaned_mo)
+        return cleaned_mo.replace('•', '-')
     
     def learn_more(self, abstract: str):
         prompt = abstract + "\n\nPlease provide educational resources (including articles, books, videos, and more) to help understand the concepts described in the above abstract. Do not provide links."
         model_output = self.callModel(prompt)
-        cleaned_mo = model_output
-        return cleaned_mo
+        cleaned_mo = model_output.strip()
+        return cleaned_mo.replace('•', '-')
     
 if __name__ == "__main__":
     abstract = "We present a conceptually simple, flexible, and general framework for object instance segmentation. Our approach efficiently detects objects in an image while simultaneously generating a high-quality segmentation mask for each instance. The method, called Mask R-CNN, extends Faster R-CNN by adding a branch for predicting an object mask in parallel with the existing branch for bounding box recognition. Mask R-CNN is simple to train and adds only a small overhead to Faster R-CNN, running at 5 fps. Moreover, Mask R-CNN is easy to generalize to other tasks, e.g., allowing us to estimate human poses in the same framework. We show top results in all three tracks of the COCO suite of challenges, including instance segmentation, bounding-box object detection, and person keypoint detection. Without tricks, Mask R-CNN outperforms all existing, single-model entries on every task, including the COCO 2016 challenge winners. We hope our simple and effective approach will serve as a solid baseline and help ease future research in instance-level recognition. Code will be made available.\n\n"
     oai = OaiCaller()
-    ggt = oai.learn_more(abstract)
+    ggt = oai.getJargon(abstract)
     breakpoint()
