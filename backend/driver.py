@@ -110,8 +110,6 @@ def get_gpt_summary():
         return "FAIL"
 
     abstract = record["paper_metadata"]["abstract"]
-    if abstract is None:
-        breakpoint()
 
     if "gpt_summaries" not in record or record["gpt_summaries"] is None:
 
@@ -131,9 +129,12 @@ def get_gpt_summary():
 
         return gptsum_json
 
+    if "gpt_summaries" not in record:
+        record["gpt_summaries"] = {"child" : None, "highschool" : None, "undergrad" : None, "masters" : None, "original" : None, "jargon" : None, "learn_more": None}
+
     gptsums = record["gpt_summaries"]
 
-    if ulev in gptsums:
+    if ulev in gptsums and gptsums[ulev] is not None:
         return gptsums
 
     generated_summary = oai_caller.getGptSummary(abstract, ulev)
@@ -165,8 +166,6 @@ def get_jargon():
         return "FAIL"
 
     abstract = record["paper_metadata"]["abstract"]
-    if abstract is None:
-        breakpoint()
 
     if "gpt_summaries" not in record or record["gpt_summaries"] is None:
 
@@ -184,6 +183,9 @@ def get_jargon():
         )
 
         return gptsum_json
+
+    if "gpt_summaries" not in record:
+        record["gpt_summaries"] = {"child" : None, "highschool" : None, "undergrad" : None, "masters" : None, "original" : None, "jargon" : None, "learn_more": None}
 
     gptsums = record["gpt_summaries"]
 
@@ -235,6 +237,9 @@ def learn_more():
         )
 
         return gptsum_json
+    
+    if "gpt_summaries" not in record:
+        record["gpt_summaries"] = {"child" : None, "highschool" : None, "undergrad" : None, "masters" : None, "original" : None, "jargon" : None, "learn_more": None}
 
     gptsums = record["gpt_summaries"]
 
