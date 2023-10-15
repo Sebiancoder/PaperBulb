@@ -23,19 +23,22 @@ class OaiCaller():
 
         print(response)
 
-        return response["choices"][0].text
+        return response
 
     def getGptSummary(self, abstract : str, ulev : str):
 
         levels = {
-        'mis': "middle school student",
-        'hs': "high school student",
-        'bs': "undergraduate college student",
-        'ms': "master's student",
-        'phd': "phd"
+        'child': "middle school student",
+        'highschool': "high school student",
+        'undergrad': "undergraduate college student",
+        'masters': "master's student",
+        'original': "original"    
         }
 
-        prompt = abstract + "Rewrite the previous so as to make it understandable by a " + levels[ulev]
+        if ulev == "original":
+            return abstract
+        
+        prompt = abstract + "Rewrite the previous so as to make it understandable by a " + levels[ulev] + "Respond with only a paragraph and no extra text or punctuation."
 
         return self.callModel(prompt)
 
