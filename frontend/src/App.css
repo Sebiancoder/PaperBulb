@@ -6,16 +6,6 @@
   overflow: hidden;
 }
 
-.toolbar {
-    width: 100%;
-    height: 50px;
-    display: flex; 
-    align-items: center; 
-    justify-content: flex-start; 
-    padding-left: 50px;
-    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1); /* This adds a light bottom shadow */
-}
-
 .app {
     width: 100vw;
     height: 100vh;
@@ -72,3 +62,25 @@
     height: 100%;
 }
 
+.toolbar {
+    width: 100%;
+    height: 50px;
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;  /* Push the children to the far ends */
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+    padding: 0 20px 0 10px; /* Add padding to the left and right of the toolbar */
+}
+
+.toolbar-svg {
+    flex-shrink: 0; /* Prevents the SVG from shrinking smaller than its content */
+    height: 100%;
+    padding: 0 10px;
+    width: min-content;
+    margin-top: 20px;
+}
+
+.image-inside-svg {
+    height: 70%; 
+    width: auto; 
+}

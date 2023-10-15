@@ -5,6 +5,7 @@ import LandingPage from './LandingPage';
 import Sidebar from './Sidebar';
 import './App.css';
 import 'react-flow-renderer/dist/style.css';
+import paperbulb from './paperbulb.svg';
 
 function App() {
   const [selectedNode, setSelectedNode] = useState(null);
@@ -37,6 +38,9 @@ function App() {
   return (
     <div className="app">
       <div className='toolbar'>
+        <svg className="toolbar-svg">
+            <image href={paperbulb}  className="image-inside-svg"/>
+        </svg>
         <Search setIsLandingPage={setIsLandingPage} setPapers={setPapers} />
       </div>
   

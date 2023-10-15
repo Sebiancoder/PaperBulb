@@ -98,12 +98,13 @@ class SS:
         papers_to_pull = [p_id for p_id in paper_ids if p_id not in ids_pulled]
         # Pull reference metadata from semantic scholar that isn't already in the database
         new_recs = {}
+        i = 0
         for p_id in papers_to_pull:
             new_rec = self.get_metadata_ss(p_id)
             new_recs[p_id] = new_rec
             rec[p_id] = new_rec
-            print("Paper done")
-
+            print("Paper done" + str(i))
+            i += 1
         # batch push
         nrk = [*new_recs.keys()]
         nrv = [*new_recs.values()]
