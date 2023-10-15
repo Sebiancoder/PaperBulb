@@ -22,19 +22,19 @@ class OaiCaller():
     def getGptSummary(self, abstract : str, ulev : str):
 
         levels = {
-        'child': "middle school student",
-        'highschool': "high school student",
-        'undergrad': "undergraduate college student",
-        'masters': "master's student",
-        'original': "original"    
+            'child': "middle school student",
+            'highschool': "high school student",
+            'undergrad': "undergraduate college student",
+            'masters': "master's student",
+            'original': "original"    
         }
 
         if ulev == "original":
             return abstract
         
-        prompt = abstract + "Rewrite the previous so as to make it understandable by a " + levels[ulev] + "Respond with only a paragraph and no extra text or punctuation."
+        prompt = abstract + "\n\nRewrite the previous so as to make it understandable by a " + levels[ulev] + ". Respond with only a paragraph and no extra text or punctuation."
 
-        return self.callModel(prompt)
+        return self.callModel(prompt).strip().replace('•', '-')
 
     def getJargon(self, abstract : str):
         prompt = abstract + "\n\nProvide a comma separated list of words in the previous paragraph that would be considered jargon specific to the field. Do not write anything else but the comma-separated list. Do not put a period at the end"
@@ -46,6 +46,8 @@ class OaiCaller():
         return cleaned_mo.replace('•', '-')
     
     def learn_more(self, abstract: str):
+        if abstract is None or abstract == "":
+            return ""
         prompt = abstract + "\n\nPlease provide educational resources (including articles, books, videos, and more) to help understand the concepts described in the above abstract. Do not provide links."
         model_output = self.callModel(prompt)
         cleaned_mo = model_output.strip()
