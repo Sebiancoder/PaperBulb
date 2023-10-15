@@ -69,3 +69,25 @@ body {
     font-size: 24px; /* Adjust this as well */
     color: #888;
 }
+
+.top-bar {
+    /* ... */
+    opacity: 1;  /* Initially visible */
+    transition: opacity 0.3s;  /* Adjust the transition */
+}
+
+
+.scrolled .top-bar {
+    /* ... */
+    opacity: 1;  /* Fully visible when scrolled */
+}
+
+.papers-grid::-webkit-scrollbar {
+    display: none;  /* Hide scrollbar for Chrome, Safari and Opera */
+}
+
+.papers-grid {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    /* ... */
+}
