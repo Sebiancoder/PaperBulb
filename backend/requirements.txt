@@ -1,0 +1,6 @@
+flask===3.0.0
+flask-cors===4.0.0
+openai===0.28.1
+boto3===1.28.63
+wget===3.2
+requests===2.31.0

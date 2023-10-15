@@ -1,0 +1,25 @@
+# Set base image (host OS)
+FROM python:3.10-alpine
+
+# By default, listen on port 5000
+EXPOSE 5000/tcp
+
+# Set the working directory in the container
+WORKDIR /
+
+# Copy the dependencies file to the working directory
+COPY requirements.txt .
+
+# Install any dependencies
+RUN pip install -r requirements.txt
+
+# Copy the content of the local src directory to the working directory
+COPY driver.py .
+COPY secretK .
+COPY __init__.py .
+COPY database_driver.py .
+COPY oai_caller.py .
+COPY ss_caller.py .
+
+# Specify the command to run on container start
+CMD [ "python", "driver.py"]
