@@ -25,6 +25,10 @@
 
 }
 
+.sidebar > .content-box {
+    min-width: 100%;
+}
+
 .sidebar > button {
     font-size: 50px;
     background-color: transparent;
@@ -50,5 +54,5 @@ a {
     font-size: 12px;
     text-decoration: none !important;
     color: cadetblue !important;
-
 }
+

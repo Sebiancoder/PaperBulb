@@ -10,6 +10,10 @@ function ArticleNode({ data }) {
         borderRadius: '5px',
         background: 'lightgray',
         border: '1px solid gray',
+        textAlign: 'center',
+        width: 'px',
+        height: 'fit-content',
+        fontSize: '1.5em',
       }}
     >
       {/* Centered handles */}

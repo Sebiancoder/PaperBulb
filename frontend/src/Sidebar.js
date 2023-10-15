@@ -77,7 +77,7 @@ function Sidebar({ isCollapsed, setIsCollapsed, selectedNode }) {
         {isCollapsed ? '«' : '»'}
       </button>
       {!isCollapsed && selectedNode && (
-        <div>
+        <div className='content-box'>
           <h4>{selectedNode?.data.label}</h4>
           <a href={`https://www.semanticscholar.org/paper/${selectedNode?.data.paperId}`} 
              style={{ fontSize: '12px' }} 

@@ -2,12 +2,31 @@ import React, { useCallback, useEffect, useState } from 'react';
 import ReactFlow, {PanOnScrollMode, ReactFlowProvider, useNodesState, useEdgesState, MiniMap, Controls, Background } from 'react-flow-renderer';
 import { ArticleNode } from './ArticleNode';
 import sendBackendRequest from './sendBackendRequest';
+import FilterMenu from './FilterMenu';
 
 const nodeTypes = {
   article: ArticleNode
 };
 
 function FlowComponent({ onNodeClick, paperId }) {
+  const [filterValues, setFilterValues] = useState({
+    refDlim: 1,
+    cbDlim: 1,
+    minYear: 1950,
+    minNumCitations: 500,
+    nLeastReferences: 10
+  });
+  
+  const handleFilterChange = (newFilterValues) => {
+    setFilterValues(newFilterValues);
+    refreshGraph(newFilterValues);
+  };
+  
+  const refreshGraph = (newFilterValues) => {
+    console.log("Refreshing graph with filter values:", newFilterValues);
+    getInitialNodes(newFilterValues);
+  };
+
   const onLoad = (reactFlowInstance) => {
     reactFlowInstance.fitView();
   };
@@ -41,7 +60,6 @@ function FlowComponent({ onNodeClick, paperId }) {
         queue.push({ id: neighbor, level: current.level + 1 });
       }
     }
-  
     return levels;
   }
   
@@ -49,11 +67,11 @@ function FlowComponent({ onNodeClick, paperId }) {
     try {
         const params = new URLSearchParams({ 
           start_paper: paperId,
-          ref_dlim: 1,
-          cb_dlim: 1,
-          min_year: 1950,
-          min_num_citations: 500,
-          n_least_references: 10
+          ref_dlim: filterValues.refDlim,
+          cb_dlim: filterValues.cbDlim,
+          min_year: filterValues.minYear,
+          min_num_citations: filterValues.minNumCitations,
+          n_least_references: filterValues.nLeastReferences
         });
         const response = await sendBackendRequest("generate_graph", params.toString());
         if (response) {
@@ -139,10 +157,9 @@ function FlowComponent({ onNodeClick, paperId }) {
             });
 
             setNodes(nodes.length ? nodes : defaultNode);
+            console.log("Nodes:", nodes);
             setEdges(edges);
-
-
-
+            console.log("Edges:", edges);
         }
     } catch (error) {
         console.error("Error fetching initial nodes:", error);
@@ -151,7 +168,7 @@ function FlowComponent({ onNodeClick, paperId }) {
 
   useEffect(() => {
     if (paperId) {
-      getInitialNodes();
+        getInitialNodes(filterValues);  // Pass the filterValues from state
     }
   }, [paperId]);
 
@@ -163,29 +180,40 @@ function FlowComponent({ onNodeClick, paperId }) {
     return node;
   }, [setNodes, setEdges, nodes, onNodeClick]);
 
-  const handleRemoveNode = useCallback((nodeId) => {
-    const newNodes = nodes.filter(n => n.id !== nodeId);
-    const newEdges = edges.filter(e => e.source !== nodeId && e.target !== nodeId);
-  
-    setNodes(newNodes);
-    setEdges(newEdges);
-  }, [nodes, edges, setNodes, setEdges]);  
+
+  const filterMenuStyles = {
+    position: 'absolute',
+    top: '10px',
+    left: '10px',
+    height: 'min-content',
+    zIndex: 100
+  };
 
   return (
+    <>
+      <FilterMenu 
+      style={filterMenuStyles}
+      refDlim={filterValues.refDlim}
+      cbDlim={filterValues.cbDlim}
+      minYear={filterValues.minYear}
+      minNumCitations={filterValues.minNumCitations}
+      nLeastReferences={filterValues.nLeastReferences}
+      onFilterChange={handleFilterChange}
+    />
     <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      nodeTypes={nodeTypes}
-      onNodeClick={handleNodeClick}
-      nodesDraggable={true}
-      onLoad={onLoad}
-      panOnScroll={true}
-      panOnScrollMode={PanOnScrollMode.Horizontal}
-    >
+            nodes={nodes}
+            edges={edges}
+            nodeTypes={nodeTypes}
+            onNodeClick={handleNodeClick}
+            nodesDraggable={true}
+            onLoad={onLoad}
+            panOnScroll={true}
+            panOnScrollMode={PanOnScrollMode.Horizontal}>
       <MiniMap />
       <Controls />
       <Background />
     </ReactFlow>
+    </>
   );
 }
 

@@ -6,8 +6,6 @@
   overflow: hidden;
 }
 
-
-
 .toolbar {
     width: 100%;
     height: 50px;
@@ -66,10 +64,11 @@
     bottom: auto !important;  /* reset the default bottom positioning */
     right: auto !important;   /* reset the default right positioning */
     top: 10px !important;     /* position from the top */
-    left: 10px !important;   /* position from the left */
+    left: 140px !important;   /* position from the left */
 }
 
 .react-flow {
     width: 100%;
     height: 100%;
 }
+
