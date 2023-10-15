@@ -1,8 +1,13 @@
+body {
+    background-color: #f5f5f5;
+}
 .papers-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
-    padding: 100px;
+    padding: 100px 100px 0 100px;
+    height: 100vh;
+    overflow: scroll;
 }
 
 .paper {
@@ -12,7 +17,7 @@
     padding: 15px;
     transition: transform 0.3s;
     height: 300px;
-    /* Optional: Makes the tile slightly larger when hovered */
+
     &:hover {
         transform: scale(1.05);
     }
@@ -28,11 +33,39 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 3; /* Limits text to 3 lines */
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
 
 .search-container {
-    margin: 100px;
-    margin-bottom: 10px;
+    width: 90%; /* Adjust as per requirement */
+    margin: 0 auto; /* Center it */
+}
+
+.top-bar {
+    position: fixed;
+    top: 30px;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: transparent;
+    transition: background-color 0.3s;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scrolled .top-bar {
+    background-color: #000;
+    color: #fff;
+}
+
+.no-papers-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px; /* Adjust this as per your requirement */
+    font-size: 24px; /* Adjust this as well */
+    color: #888;
 }
