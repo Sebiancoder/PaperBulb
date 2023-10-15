@@ -118,4 +118,22 @@ class DbDriver():
                 UpdateExpression=update_expression,
                 ExpressionAttributeValues=update_values)
 
+    def update_learn_more(self, table : str, primary_key : str, primary_key_value, more : dict):
+
+        tableObj = self.db_client.Table(table)
+
+        pk_pair = {primary_key: primary_key_value}
+        
+        update_expression = 'SET learn_more = :more'
+        update_values = {
+            ':more': more
+        }
+
+        response = tableObj.update_item(
+                TableName=table,
+                Key=pk_pair,
+                UpdateExpression=update_expression,
+                ExpressionAttributeValues=update_values
+            )
+
     

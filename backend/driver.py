@@ -157,7 +157,8 @@ def get_jargon():
     record = db_driver.fetch_record(
         table="paperTable",
         primary_key="paper_id",
-        primary_key_value=paper)
+        primary_key_value=paper
+    )
 
     if record is None:
         return "FAIL"
@@ -198,6 +199,37 @@ def get_jargon():
         )
 
     return jargon
+
+@app.route('/learn_more')
+def learn_more():
+    '''Finds out more information given an abstract'''
+    paper = request.args.get("paper")
+    
+    record = db_driver.fetch_record(
+        table="paperTable",
+        primary_key="paper_id",
+        primary_key_value=paper
+    )
+
+    if record is None:
+        return "FAIL"
+    
+    if "learn_more" not in record or record["learn_more"] is None:
+
+        more = oai_caller.learn_more(record['abstract'])
+
+        more_json = {
+            "more": more
+        }
+
+        db_driver.update_learn_more(
+            table="paperTable",
+            primary_key="paper_id",
+            primary_key_value=paper,
+            more=more_json
+        )
+
+        return more
 
 @app.route('/search_papers')
 def search_papers():
