@@ -4,8 +4,7 @@ import { ArticleNode } from './ArticleNode';
 import sendBackendRequest from './sendBackendRequest';
 
 const nodeTypes = {
-  article: ArticleNode,
-  textbox: TextBoxNode
+  article: ArticleNode
 };
 
 function FlowComponent({ onNodeClick, paperId }) {
