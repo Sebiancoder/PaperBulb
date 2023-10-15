@@ -86,34 +86,22 @@ body {
 
 .no-papers-message {
     position: absolute;
-    width: 100%;
+    width: 50%;
     height: 100%;
     display: flex;
     justify-content: center; /* center horizontally */
     align-items: center;     /* center vertically */
-}
-
-.logo-and-info {
-    display: flex;
-    align-items: flex-start;  /* align logo and text at the top */
-    gap: 20px;
+    flex-direction: column;  /* stack logo and text vertically */
 }
 
 .logo {
+    float: left; 
     width: 100px;  /* adjust as needed */
     height: auto;
 }
 
 .info-text {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;  /* space between title and description */
-}
-
-.info-text h1 {
-    margin: 0;
-}
-
-.info-text p {
-    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    line-height: 20px;
 }
