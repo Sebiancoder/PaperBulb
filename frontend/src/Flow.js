@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import ReactFlow, { ReactFlowProvider, useNodesState, useEdgesState, MiniMap, Controls, Background } from 'react-flow-renderer';
 import { ArticleNode } from './ArticleNode';
-import TextBoxNode from './TextBoxNode';
 import sendBackendRequest from './sendBackendRequest';
 
 const nodeTypes = {
