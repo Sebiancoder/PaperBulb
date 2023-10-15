@@ -1,37 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import ReactFlow, {PanOnScrollMode, ReactFlowProvider, useNodesState, useEdgesState, MiniMap, Controls, Background } from 'react-flow-renderer';
+import ReactFlow, { ReactFlowProvider, useNodesState, useEdgesState, MiniMap, Controls, Background } from 'react-flow-renderer';
 import { ArticleNode } from './ArticleNode';
+import TextBoxNode from './TextBoxNode';
 import sendBackendRequest from './sendBackendRequest';
-import FilterMenu from './FilterMenu';
 
 const nodeTypes = {
-  article: ArticleNode
+  article: ArticleNode,
+  textbox: TextBoxNode
 };
 
 function FlowComponent({ onNodeClick, paperId }) {
-  const [filterValues, setFilterValues] = useState({
-    refDlim: 1,
-    cbDlim: 1,
-    minYear: 1950,
-    minNumCitations: 500,
-    nLeastReferences: 10
-  });
-  
-  const handleFilterChange = (newFilterValues) => {
-    console.log("Filter values changed:", newFilterValues);
-    setFilterValues(newFilterValues);
-    refreshGraph(newFilterValues);
-  };
-  
-  const refreshGraph = (newFilterValues) => {
-    console.log("Refreshing graph with filter values:", newFilterValues);
-    getInitialNodes(newFilterValues);
-  };
-
-  const onLoad = (reactFlowInstance) => {
-    reactFlowInstance.fitView();
-  };
-
   const defaultNode = [{
     id: 'default',
     type: 'article',
@@ -61,19 +39,19 @@ function FlowComponent({ onNodeClick, paperId }) {
         queue.push({ id: neighbor, level: current.level + 1 });
       }
     }
+  
     return levels;
   }
   
   const getInitialNodes = async () => {
-    console.log("Fetching initial nodes...");
     try {
         const params = new URLSearchParams({ 
           start_paper: paperId,
-          ref_dlim: filterValues.refDlim,
-          cb_dlim: filterValues.cbDlim,
-          min_year: filterValues.minYear,
-          min_num_citations: filterValues.minNumCitations,
-          n_least_references: filterValues.nLeastReferences
+          ref_dlim: 1,
+          cb_dlim: 1,
+          min_year: 1950,
+          min_num_citations: 500,
+          n_least_references: 10
         });
         const response = await sendBackendRequest("generate_graph", params.toString());
         if (response) {
@@ -159,9 +137,10 @@ function FlowComponent({ onNodeClick, paperId }) {
             });
 
             setNodes(nodes.length ? nodes : defaultNode);
-            console.log("Nodes:", nodes);
             setEdges(edges);
-            console.log("Edges:", edges);
+
+
+
         }
     } catch (error) {
         console.error("Error fetching initial nodes:", error);
@@ -170,55 +149,59 @@ function FlowComponent({ onNodeClick, paperId }) {
 
   useEffect(() => {
     if (paperId) {
-        getInitialNodes(filterValues);  // Pass the filterValues from state
+      getInitialNodes();
     }
   }, [paperId]);
 
   const handleNodeClick = useCallback((event, node) => {
-    console.log("Node clicked:", node);
+    if (node.id === 'default') return;
+
+    if (node.type === 'article') {
+      const newNodeId = `${node.id}-textbox`;
+      if (!nodes.find(n => n.id === newNodeId)) {
+        const newNode = {
+          id: newNodeId,
+          type: 'textbox',
+          position: { x: node.position.x, y: node.position.y + 100 },
+          data: { label: '', onRemove: handleRemoveNode }
+        };
+        const newEdge = {
+          id: `e${node.id}-${newNodeId}`,
+          source: node.id,
+          target: newNodeId,
+          type: 'simplebezier'
+        };
+
+        setNodes((prevNodes) => [...prevNodes, newNode]);
+        setEdges((prevEdges) => [...prevEdges, newEdge]);
+      }
+    }
     if (onNodeClick) {
       onNodeClick(node);
     }
     return node;
   }, [setNodes, setEdges, nodes, onNodeClick]);
 
-
-  const filterMenuStyles = {
-    position: 'absolute',
-    top: '10px',
-    left: '10px',
-    height: 'min-content',
-    zIndex: 100
-  };
+  const handleRemoveNode = useCallback((nodeId) => {
+    const newNodes = nodes.filter(n => n.id !== nodeId);
+    const newEdges = edges.filter(e => e.source !== nodeId && e.target !== nodeId);
+  
+    setNodes(newNodes);
+    setEdges(newEdges);
+  }, [nodes, edges, setNodes, setEdges]);  
 
   return (
-    <>
-      <FilterMenu 
-      style={filterMenuStyles}
-      refDlim={filterValues.refDlim}
-      cbDlim={filterValues.cbDlim}
-      minYear={filterValues.minYear}
-      minNumCitations={filterValues.minNumCitations}
-      nLeastReferences={filterValues.nLeastReferences}
-      onFilterChange={handleFilterChange}
-    />
     <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={nodeTypes}
-            onNodeClick={handleNodeClick}
-            nodesDraggable={true}
-            onLoad={onLoad}
-            panOnScroll={true}
-            panOnScrollMode={PanOnScrollMode.Horizontal}
-            minZoom={0.1} 
-            maxZoom={2}
-      >
+      nodes={nodes}
+      edges={edges}
+      nodeTypes={nodeTypes}
+      onNodeClick={handleNodeClick}
+      nodesDraggable={true} // this is true by default
+    >
       <MiniMap />
       <Controls />
       <Background />
     </ReactFlow>
-    </>
   );
 }
 

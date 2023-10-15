@@ -106,7 +106,7 @@ function Sidebar({ isCollapsed, setIsCollapsed, selectedNode }) {
           />
           <p>{isLoading ? (
             <p style={{marginBottom: '500px'}}>Loading...</p>
-          ) : (simplifiedAbstract || selectedNode?.data.abstract)}</p>
+          ) : (simplifiedAbstract ?? selectedNode?.data.abstract)}</p>
           <div>
             <h5>Keywords:</h5>
             {/* <ul>

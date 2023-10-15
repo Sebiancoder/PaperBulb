@@ -11,17 +11,11 @@ class OaiCaller():
         openai.api_key = f"{OPENAI}"
 
     def callModel(self, prompt : str):
-
-        print("prompt")
-        print(prompt)
-
         response = openai.Completion.create(
             engine="text-davinci-003",  # Choose the appropriate engine
             prompt=prompt,
             max_tokens=1750  # Maximum number of tokens in the response
         )
-
-        print(response)
 
         return response['choices'][0]['text']
 

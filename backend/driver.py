@@ -35,7 +35,6 @@ def fetch_paper():
         primary_key="paper_id",
         primary_key_value=paper)["paper_metadata"]
     
-    print("record")
     print(record.keys())
 
     return record
@@ -149,7 +148,6 @@ def get_gpt_summary():
             gpt_summaries=gptsums
         )
 
-    print(gptsums)
     return gptsums
 
 @app.route('/get_jargon')
