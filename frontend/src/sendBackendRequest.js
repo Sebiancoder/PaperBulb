@@ -1,8 +1,9 @@
-const backendUrl = "http://127.0.0.1:5000/";
+const backendUrl = "https://paper-bulb-1.csmtu2rs75560.us-east-1.cs.amazonlightsail.com/";
 
 function sendBackendRequest(endpoint, the_rest) {
   const apiUrl = backendUrl + endpoint + "?" + the_rest;
-  return fetch(apiUrl)
+  console.log(apiUrl)
+  return fetch(apiUrl, {mode: 'cors'})
     .then((response) => {
       if (!response.ok) {
         throw new Error('Request failed');

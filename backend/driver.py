@@ -8,6 +8,7 @@ from flask_cors import CORS
 
 app = Flask("paperbulb")
 CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 #database object
 db_driver = DbDriver()
