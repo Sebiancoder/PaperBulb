@@ -48,7 +48,7 @@ class OaiCaller():
     def learn_more(self, abstract: str):
         if abstract is None or abstract == "":
             return ""
-        prompt = abstract + "\n\nPlease provide educational resources (including articles, books, and more) to help understand the concepts described in the above abstract. Do not provide links, and format the resources in line-separated bullet points."
+        prompt = abstract + "\n\nPlease provide educational resources (including articles, books, and more) to help understand the concepts described in the above abstract. Do not provide links, and do not include any punctuation nor any text besides the comma-separated values."
         model_output = self.callModel(prompt)
         cleaned_mo = model_output.strip()
         return cleaned_mo.replace('•', '-').replace('\n','\n\n')
