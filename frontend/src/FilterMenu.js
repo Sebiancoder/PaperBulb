@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import './FilterMenu.css';
 
 function FilterMenu(props) {
-    const [refDlim, setRefDlim] = useState(1);
+    const [refDlim, setRefDlim] = useState(props.refDlim);
     const [cbDlim, setCbDlim] = useState(1);
     const [minYear, setMinYear] = useState(1950);
     const [minNumCitations, setMinNumCitations] = useState(500);
@@ -12,23 +12,68 @@ function FilterMenu(props) {
 
     const handleRefDlimChange = (event, newValue) => {
         setRefDlim(newValue);
+        if (props.onFilterChange) {
+            props.onFilterChange({
+                refDlim: newValue,
+                cbDlim,
+                minYear,
+                minNumCitations,
+                nLeastReferences
+            });
+        }
     };
-
+    
     const handleCbDlimChange = (event, newValue) => {
         setCbDlim(newValue);
+        if (props.onFilterChange) {
+            props.onFilterChange({
+                refDlim,
+                cbDlim: newValue,
+                minYear,
+                minNumCitations,
+                nLeastReferences
+            });
+        }
     };
-
+    
     const handleMinYearChange = (event, newValue) => {
         setMinYear(newValue);
+        if (props.onFilterChange) {
+            props.onFilterChange({
+                refDlim,
+                cbDlim,
+                minYear: newValue,
+                minNumCitations,
+                nLeastReferences
+            });
+        }
     };
-
+    
     const handleMinNumCitationsChange = (event, newValue) => {
         setMinNumCitations(newValue);
+        if (props.onFilterChange) {
+            props.onFilterChange({
+                refDlim,
+                cbDlim,
+                minYear,
+                minNumCitations: newValue,
+                nLeastReferences
+            });
+        }
     };
-
+    
     const handleNLeastReferencesChange = (event, newValue) => {
         setNLeastReferences(newValue);
-    };
+        if (props.onFilterChange) {
+            props.onFilterChange({
+                refDlim,
+                cbDlim,
+                minYear,
+                minNumCitations,
+                nLeastReferences: newValue
+            });
+        }
+    };    
 
     return (
         <div className='slider-container'>
@@ -63,7 +108,7 @@ function FilterMenu(props) {
                 value={minYear}
                 onChange={handleMinYearChange}
                 aria-labelledby="min-year-slider"
-                step={1}
+                step={25}
                 min={1900}
                 max={2022}
                 valueLabelDisplay="auto"
@@ -75,7 +120,7 @@ function FilterMenu(props) {
                 value={minNumCitations}
                 onChange={handleMinNumCitationsChange}
                 aria-labelledby="min-num-citations-slider"
-                step={10}
+                step={25}
                 min={0}
                 max={1000}
                 valueLabelDisplay="auto"

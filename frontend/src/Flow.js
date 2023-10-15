@@ -18,6 +18,7 @@ function FlowComponent({ onNodeClick, paperId }) {
   });
   
   const handleFilterChange = (newFilterValues) => {
+    console.log("Filter values changed:", newFilterValues);
     setFilterValues(newFilterValues);
     refreshGraph(newFilterValues);
   };
@@ -64,6 +65,7 @@ function FlowComponent({ onNodeClick, paperId }) {
   }
   
   const getInitialNodes = async () => {
+    console.log("Fetching initial nodes...");
     try {
         const params = new URLSearchParams({ 
           start_paper: paperId,
@@ -208,7 +210,10 @@ function FlowComponent({ onNodeClick, paperId }) {
             nodesDraggable={true}
             onLoad={onLoad}
             panOnScroll={true}
-            panOnScrollMode={PanOnScrollMode.Horizontal}>
+            panOnScrollMode={PanOnScrollMode.Horizontal}
+            minZoom={0.1} 
+            maxZoom={2}
+      >
       <MiniMap />
       <Controls />
       <Background />
