@@ -26,7 +26,7 @@
 }
 
 .sidebar > .content-box {
-    min-width: 100%;
+    max-width: 100%;
 }
 
 .sidebar > button {
@@ -56,3 +56,14 @@ a {
     color: cadetblue !important;
 }
 
+.keyword-link {
+    margin: 5px;
+    font-size: 14px;
+    text-decoration: none;
+    color: #007BFF;
+    transition: color 0.3s;
+}
+
+.keyword-link:hover {
+    color: #0056b3;
+}

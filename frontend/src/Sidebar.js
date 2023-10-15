@@ -3,12 +3,12 @@ import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 import sendBackendRequest from './sendBackendRequest';
 import './Sidebar.css';
-import { select } from 'd3-selection';
 
 function Sidebar({ isCollapsed, setIsCollapsed, selectedNode }) {
   const [currentLevel, setCurrentLevel] = React.useState(80);
   const [simplifiedAbstract, setSimplifiedAbstract] = React.useState('');
   const [keywords, setKeywords] = React.useState([]);
+  const [resources, setResources] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
 
   const levels = [
@@ -19,59 +19,62 @@ function Sidebar({ isCollapsed, setIsCollapsed, selectedNode }) {
     { value: 80, label: 'original'}
   ];
 
-  React.useEffect(() => {
-    const fetchSimplifiedAbstract = async () => {
-      setIsLoading(true);
-      try {
-        const selectedLevel = levels.find(l => l.value === currentLevel).label;
-    
-        if (selectedLevel === 'original') {
-          setSimplifiedAbstract(selectedNode?.data.abstract);
-          setIsLoading(false);
-          return;
-        }
-    
-        const params = new URLSearchParams({ paper: selectedNode?.data.paperId, ulev: selectedLevel });
-        const response = await sendBackendRequest("get_gpt_summary", params.toString());
-    
-        console.log("Response from get_gpt_summary:", response[selectedLevel]);
-    
-        if (response) {
-          setSimplifiedAbstract(response[selectedLevel]);
-        }
-      } catch (error) {
-        console.error("Error fetching simplified abstract:", error);
+  const fetchSimplifiedAbstract = async () => {
+    setIsLoading(true);
+    try {
+      const selectedLevel = levels.find(l => l.value === currentLevel).label;
+  
+      if (selectedLevel === 'original') {
+        setSimplifiedAbstract(selectedNode?.data.abstract);
+        setIsLoading(false);
+        return;
       }
-      setIsLoading(false);
-    };
+  
+      const params = new URLSearchParams({ paper: selectedNode?.data.paperId, ulev: selectedLevel });
+      const response = await sendBackendRequest("get_gpt_summary", params.toString());
+      console.log("Response from get_gpt_summary:", response[selectedLevel]);
+  
+      if (response) {
+        setSimplifiedAbstract(response[selectedLevel]);
+      }
+    } catch (error) {
+      console.error("Error fetching simplified abstract:", error);
+    }
+    setIsLoading(false);
+  };
 
+  const fetchKeywords = async () => {
+    try {
+      const params = new URLSearchParams({ paper: selectedNode?.data.paperId });
+      const response = await sendBackendRequest("get_jargon", params.toString());
+      if (response && response.jargon) {
+        setKeywords(response.jargon);
+      }
+      console.log("Response from get_jargon:", response.jargon);
+    } catch (error) {
+      console.error("Error fetching keywords:", error);
+    }
+  };
+
+  const fetchResources = async () => {
+    try {
+      const params2 = new URLSearchParams({ paper: selectedNode?.data.paperId });
+      const response2 = await sendBackendRequest("learn_more", params2.toString());
+      if (response2 && response2.learn_more) {
+        setResources(response2.learn_more);
+      }
+    } catch (error) {
+      console.error("Error fetching resources:", error);
+    }
+  };
+
+  React.useEffect(() => {
     if (selectedNode) {
       fetchSimplifiedAbstract();
+      fetchKeywords();
+      fetchResources();
     }
   }, [selectedNode, currentLevel]);
-
-  React.useEffect(() => {
-    const fetchKeywords = async () => {
-      try {
-        const params = new URLSearchParams({ paper: selectedNode?.data.paperId });
-        const response = await sendBackendRequest("get_jargon", params.toString());
-        if (response && response.jargon) {
-          setKeywords(response.jargon);
-        }
-        const params2 = new URLSearchParams({ paper: selectedNode?.data.paperId });
-        const response2 = await sendBackendRequest("learn_more", params2.toString());
-        if (response2 && response2.learn_more) {
-          setKeywords(response.learn_more);
-        }
-      } catch (error) {
-        console.error("Error fetching keywords:", error);
-      }
-    };
-  
-    if (selectedNode) {
-      fetchKeywords();
-    }
-  }, [selectedNode]);
 
   const handleLevelChange = (event, newValue) => {
     setCurrentLevel(newValue);
@@ -104,16 +107,25 @@ function Sidebar({ isCollapsed, setIsCollapsed, selectedNode }) {
             valueLabelDisplay="auto"
             max={80}
           />
-          <p>{isLoading ? (
-            <p style={{marginBottom: '500px'}}>Loading...</p>
-          ) : (simplifiedAbstract ?? selectedNode?.data.abstract)}</p>
+          <div>
+            <p>{isLoading ? (
+              <p style={{marginBottom: '500px'}}>Loading...</p>
+            ) : (simplifiedAbstract ?? selectedNode?.data.abstract)}</p>
+          </div>
           <div>
             <h5>Keywords:</h5>
-            {/* <ul>
-              {keywords.map((keyword, index) => (
-                <li key={index}>{keyword}</li>
-              ))}
-            </ul> */}
+                {typeof keywords === 'string' ? (
+                  keywords.split('- ').map((keyword, index) => (
+                      <a 
+                          key={index} 
+                          href={`https://www.google.com/search?q=${keyword}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="keyword-link">
+                          {keyword.trim()}
+                      </a>
+                  ))
+              ) : null}
           </div>
         </div>
       )}
