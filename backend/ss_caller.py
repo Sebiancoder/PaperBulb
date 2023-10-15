@@ -87,7 +87,11 @@ class SS:
 
     def get_list_of_metadata(self, paper_ids: list):
         '''Returns the references of a paper from either the database or semantic scholar. Leave original_paper_id as None'''
-        rec = self.dbd.batch_fetch_record("paperTable", "paper_id", paper_ids)
+        rec = {}
+        i = 0
+        while i < len(paper_ids):
+            rec = {**rec, **self.dbd.batch_fetch_record("paperTable", "paper_id", paper_ids[i:max(len(paper_ids),i+100)])}
+            i += 100
         if rec is None:
             print("Error retreiving reference metadata from database")
             return None
