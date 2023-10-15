@@ -13,7 +13,6 @@ Credit for API: Semantic Scholar
 
 from secretK.secretK import SEMSCHO
 import os
-import openai
 import requests
 import urllib.request
 import PyPDF2
@@ -21,149 +20,126 @@ import datetime
 import json
 from database_driver import DbDriver
 
-dbd = DbDriver()
 
-def search10(query: str):
-    '''Searches a term in semantic scholar and returns the 10 most relevant articles'''
-    try:
-        return [paper['paperId'] for paper in requests.get(f"http://api.semanticscholar.org/graph/v1/paper/search?query={query.replace(' ', '+')}", headers={'X-API-KEY': SEMSCHO}).json()['data']]
-    except:
-        print(f"Failure searching 10 most relevant articles. Query: {query}")
-        return None
+class SS:
+    def __init__(self):
+        self.dbd = DbDriver()
 
-def download_pdf(url: str):
-    '''Downloads a PDF from a link and returns the relative file path'''
-    try:
-        rel_path = f"backend/temp/{datetime.datetime.now().timestamp()}"
-        urllib.request.urlretrieve(pdf_link, rel_path, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36'})
-        return rel_path
-    except:
-        print("Failure downloading PDF")
-        return None
+    def search10(self, query: str):
+        '''Searches a term in semantic scholar and returns the 10 most relevant articles'''
+        try:
+            return [paper['paperId'] for paper in requests.get(f"http://api.semanticscholar.org/graph/v1/paper/search?query={query.replace(' ', '+')}", headers={'X-API-KEY': SEMSCHO}).json()['data']]
+        except:
+            print(f"Failure searching 10 most relevant articles. Query: {query}")
+            return None
 
-def parse_pdf(url: str):
-    '''BROKEN; DO NOT USE
-        Downloads a PDF from a URL and reads its text to string
-        '''
-    rel_path = download_pdf(url)
-    if rel_path != "Fail":
-        pdf_file = open(rel_path, 'rb')
-        pdf_reader = PyPDF2.PdfReader(pdf_file)
-        text = ''
-        for pg in pdf_reader.pages:
-            text += pg.extract_text() + "\n\n"
-        pdf_file.close()
-        return text
-    else:
-        print("Failure downloading pdf")
-        return None
+    def get_abstract(self, paper_id: str):
+        '''Gets the abstract of a paper from semantic scholar'''
+        try:
+            response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,abstract', headers={'X-API-KEY': SEMSCHO}).json()
+            return response['abstract']
+        except:
+            print("Failure retrieving abstract")
+            return None
 
-def get_abstract(paper_id: str):
-    '''Gets the abstract of a paper from semantic scholar'''
-    try:
-        response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,abstract', headers={'X-API-KEY': SEMSCHO}).json()
-        return response['abstract']
-    except:
-        print("Failure retrieving abstract")
-        return None
+    def get_citations(self, paper_id: str):
+        '''Gets the citations of a paper from semantic scholar'''
+        try:
+            response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,citations', headers={'X-API-KEY': SEMSCHO}).json()
+            return response['citations']
+        except:
+            print("Failure retrieving citations")
+            return None
 
-def get_citations(paper_id: str):
-    '''Gets the citations of a paper from semantic scholar'''
-    try:
-        response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,citations', headers={'X-API-KEY': SEMSCHO}).json()
-        return response['citations']
-    except:
-        print("Failure retrieving citations")
-        return None
+    def get_reference_paper_ids(self, paper_id: str):
+        '''Gets the reference ids of a paper from semantic scholar'''
+        try:
+            response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,references', headers={'X-API-KEY': SEMSCHO}).json()
+            return [ref['paperId'] for ref in response['references']]
+        except:
+            print("Failure retrieving reference ids")
+            return None
 
-def get_reference_paper_ids(paper_id: str):
-    '''Gets the reference ids of a paper from semantic scholar'''
-    try:
-        response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,references', headers={'X-API-KEY': SEMSCHO}).json()
-        return [ref['paperId'] for ref in response['references']]
-    except:
-        print("Failure retrieving reference ids")
-        return None
+    def metadata_cutter(self, paper_id: str, response: dict):
+        link = f"https://www.semanticscholar.org/paper/{paper_id}"
+        title = response['title']
+        authors = response['authors']
+        year = response['year']
+        abstract = response['abstract']
+        journal = response['journal']
+        citations = [cit['paperId'] for cit in response['citations'] if cit['paperId'] is not None]
+        references = [ref['paperId'] for ref in response['references'] if ref['paperId'] is not None]
+        return {"url":link, "title":title, "authors":authors, "year":year, "abstract":abstract, "citations":citations, "journal":journal, "references":references}
 
-def metadata_cutter(paper_id: str, response: dict):
-    link = f"https://www.semanticscholar.org/paper/{paper_id}"
-    title = response['title']
-    authors = response['authors']
-    year = response['year']
-    abstract = response['abstract']
-    journal = response['journal']
-    citations = [cit['paperId'] for cit in response['citations'] if cit['paperId'] is not None]
-    references = [ref['paperId'] for ref in response['references'] if ref['paperId'] is not None]
-    return {"url":link, "title":title, "authors":authors, "year":year, "abstract":abstract, "citations":citations, "journal":journal, "references":references}
+    def get_reference_metadata_ss(self, reference_paper_ids: list):
+        '''Returns the references of a paper from semantic scholar'''
+        try:
+            response = requests.post(
+                'https://api.semanticscholar.org/graph/v1/paper/batch',
+                params={'fields': 'title,authors,abstract,citations,references,year,journal'},
+                json={"ids": reference_paper_ids}
+            ).json()
+            response = list(filter(lambda resp: resp is not None, response))
+            refs = {resp['paperId']:self.metadata_cutter(resp['paperId'], resp) for resp in response}
+            return refs
+        except:
+            print("Failure retrieving references")
+            return None
 
-def get_reference_metadata_ss(reference_paper_ids: list):
-    '''Returns the references of a paper from semantic scholar'''
-    try:
-        response = requests.post(
-            'https://api.semanticscholar.org/graph/v1/paper/batch',
-            params={'fields': 'title,authors,abstract,citations,references,year,journal'},
-            json={"ids": reference_paper_ids}
-        ).json()
-        response = list(filter(lambda resp: resp is not None, response))
-        refs = {resp['paperId']:metadata_cutter(resp['paperId'], resp) for resp in response}
-        return refs
-    except:
-        print("Failure retrieving references")
-        return None
+    def get_list_of_metadata(self, paper_ids: list):
+        '''Returns the references of a paper from either the database or semantic scholar. Leave original_paper_id as None'''
+        rec = self.dbd.batch_fetch_record("paperTable", "paper_id", paper_ids)
+        if rec is None:
+            print("Error retreiving reference metadata from database")
+            return None
+        print(f"Relying on database for {len(rec)} of {len(paper_ids)}, semantic scholar for the rest")
 
-def get_list_of_metadata(paper_ids: list):
-    '''Returns the references of a paper from either the database or semantic scholar. Leave original_paper_id as None'''
-    rec = dbd.batch_fetch_record("paperTable", "paper_id", paper_ids)
-    if rec is None:
-        print("Error retreiving reference metadata from database")
-        return None
-    print(f"Relying on database for {len(rec)} of {len(paper_ids)}, semantic scholar for the rest")
+        # Pull remaining items from semantic scholar
+        ids_pulled = [*rec.keys()]
+        papers_to_pull = [p_id for p_id in paper_ids if p_id not in ids_pulled]
+        # Pull reference metadata from semantic scholar that isn't already in the database
+        new_recs = {}
+        for p_id in papers_to_pull:
+            new_rec = self.get_metadata_ss(p_id)
+            new_recs[p_id] = new_rec
+            rec[p_id] = new_rec
+            print("Paper done")
 
-    # Pull remaining items from semantic scholar
-    ids_pulled = [*rec.keys()]
-    papers_to_pull = [p_id for p_id in paper_ids if p_id not in ids_pulled]
-    # Pull reference metadata from semantic scholar that isn't already in the database
-    new_recs = {}
-    for p_id in papers_to_pull:
-        new_rec = get_metadata_ss(p_id)
-        new_recs[p_id] = new_rec
-        rec[p_id] = new_rec
-        print("Paper done")
+        # batch push
+        nrk = [*new_recs.keys()]
+        nrv = [*new_recs.values()]
+        while len(nrk) > 0:
+            self.dbd.batch_update_record('paperTable', 'paper_id', nrk[:25], nrv[:25])
+            if len(nrk) >= 25:
+                nrk = nrk[25:]
+                nrv = nrv[25:]
 
-    # batch push
-    nrk = [*new_recs.keys()]
-    nrv = [*new_recs.values()]
-    while len(nrk) > 0:
-        dbd.batch_update_record('paperTable', 'paper_id', nrk[:25], nrv[:25])
-        if len(nrk) >= 25:
-            nrk = nrk[25:]
-            nrv = nrv[25:]
+        return rec
 
-    return rec
+    def get_metadata_ss(self, paper_id: str):
+        '''Returns all metadata for the given paper id from semantic scholar'''
+        try:
+            response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,authors,abstract,citations,references,year,journal', headers={'X-API-KEY': SEMSCHO}).json()
+            return self.metadata_cutter(paper_id, response)
+        except:
+            print("Failure retrieving metadata")
+            return None
 
-def get_metadata_ss(paper_id: str):
-    '''Returns all metadata for the given paper id from semantic scholar'''
-    try:
-        response = requests.get(f'https://api.semanticscholar.org/graph/v1/paper/{paper_id}?fields=title,authors,abstract,citations,references,year,journal', headers={'X-API-KEY': SEMSCHO}).json()
-        return metadata_cutter(paper_id, response)
-    except:
-        print("Failure retrieving metadata")
-        return None
-
-def get_metadata(paper_id: str):
-    '''Returns the metadata for a paper by sourcing it from either the database or from semantic scholar'''
-    rec = dbd.fetch_record("paperTable", "paper_id", paper_id)
-    if rec is None:
-        rec = get_metadata_ss(paper_id)
-        if rec is not None:
-            dbd.update_record("paperTable", "paper_id", paper_id, rec)
-    else:
-        rec = rec["paper_metadata"]
-    return rec
+    def get_metadata(self, paper_id: str):
+        '''Returns the metadata for a paper by sourcing it from either the database or from semantic scholar'''
+        rec = self.dbd.fetch_record("paperTable", "paper_id", paper_id)
+        if rec is None:
+            rec = self.get_metadata_ss(paper_id)
+            if rec is not None:
+                self.dbd.update_record("paperTable", "paper_id", paper_id, rec)
+        else:
+            rec = rec["paper_metadata"]
+        return rec
     
 
 if __name__ == "__main__":
-    ggp = get_metadata("1a0912bb76777469295bb2c059faee907e7f3258")
+    ss = SS()
+    ggp = ss.get_metadata("1a0912bb76777469295bb2c059faee907e7f3258")
     print(ggp['references'])
-    ggt = get_list_of_metadata(ggp['references'])
+    ggt = ss.get_list_of_metadata(ggp['references'])
     breakpoint()
