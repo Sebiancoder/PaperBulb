@@ -38,6 +38,7 @@ function App() {
   return (
     <div className="app">
       <div className='toolbar'>
+        {/* IMPLMENT A LINK TO HOME ATSP */}
         <svg className="toolbar-svg">
             <image href={paperbulb}  className="image-inside-svg"/>
         </svg>
