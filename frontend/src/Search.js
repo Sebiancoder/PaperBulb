@@ -3,7 +3,7 @@ import { Form, FormControl, Button, Spinner } from 'react-bootstrap';
 import sendBackendRequest from './sendBackendRequest.js';
 
 function Search({ setPapers, setIsLandingPage }) {
-    const [searchText, setSearchText] = useState('CNN');
+    const [searchText, setSearchText] = useState('Machine Learning');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSearch = async (event) => {
@@ -31,13 +31,14 @@ function Search({ setPapers, setIsLandingPage }) {
     return (
         <Form inline onSubmit={handleSearch} className="search-form">
             <div className="input-group">
-                <FormControl
+            <FormControl
                     type="text"
                     placeholder="Search"
                     className="mr-sm-2 search-input"
                     value={searchText}
                     onChange={(event) => setSearchText(event.target.value)}
                     disabled={isLoading}
+                    style={{ color: '#39bd7f' }}
                 />
                 <Button variant="outline-success" type="submit" className="search-button" disabled={isLoading}>
                     {isLoading ? <Spinner animation="border" size="sm" /> : 'Search'}
