@@ -5,6 +5,7 @@
     text-align: center;     /* Optional: To center-align the wrapped text */
     max-width: 80px;        /* Set a maximum width for the label */
     line-height: 1.2;       /* Adjust line height for readability */
+    z-index: 1000;
   }
 
 
@@ -36,14 +37,13 @@
     /* Adding a padding and negative margin to hide the scrollbar */
     padding-right: 17px; /* Width of the scrollbar */
     margin-right: -17px; 
+    padding-left: 12px;
 }
 
 /* For Webkit browsers like Chrome and Safari */
 .sidebar > .content-box::-webkit-scrollbar {
     width: 0;
 }
-
-
 
 .sidebar > button {
     font-size: 50px;
