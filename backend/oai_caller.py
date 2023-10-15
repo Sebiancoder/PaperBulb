@@ -20,6 +20,8 @@ class OaiCaller():
         return response['choices'][0]['text']
 
     def getGptSummary(self, abstract : str, ulev : str):
+        if abstract is None or abstract == "" or ulev is None or ulev == "":
+            return ""
 
         levels = {
             'child': "middle school student",
@@ -37,6 +39,8 @@ class OaiCaller():
         return self.callModel(prompt).strip().replace('•', '-')
 
     def getJargon(self, abstract : str):
+        if abstract is None or abstract == "":
+            return ""
         prompt = abstract + "\n\nProvide a comma separated list of words in the previous paragraph that would be considered jargon specific to the field. Do not write anything else but the comma-separated list. Do not put a period at the end"
         model_output = self.callModel(prompt)
         cleaned_mo = model_output.replace(".","").replace("\n","").split(",")
