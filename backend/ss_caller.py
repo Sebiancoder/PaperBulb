@@ -15,7 +15,6 @@ from secretK.secretK import SEMSCHO
 import os
 import requests
 import urllib.request
-import PyPDF2
 import datetime
 import json
 from database_driver import DbDriver
@@ -138,8 +137,8 @@ class SS:
     
 
 if __name__ == "__main__":
-    ss = SS()
-    ggp = ss.get_metadata("1a0912bb76777469295bb2c059faee907e7f3258")
-    print(ggp['references'])
-    ggt = ss.get_list_of_metadata(ggp['references'])
+    # ss = SS()
+    # ggp = ss.get_metadata("1a0912bb76777469295bb2c059faee907e7f3258")
+    # print(ggp['references'])
+    # ggt = ss.get_list_of_metadata(ggp['references'])
     breakpoint()
