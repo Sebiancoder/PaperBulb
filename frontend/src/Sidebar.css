@@ -29,7 +29,21 @@
     max-width: 100%;
     min-width: 100%;
     overflow-y: scroll;
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+    margin-bottom: 100px;
+
+    /* Adding a padding and negative margin to hide the scrollbar */
+    padding-right: 17px; /* Width of the scrollbar */
+    margin-right: -17px; 
 }
+
+/* For Webkit browsers like Chrome and Safari */
+.sidebar > .content-box::-webkit-scrollbar {
+    width: 0;
+}
+
+
 
 .sidebar > button {
     font-size: 50px;

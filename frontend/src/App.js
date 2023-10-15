@@ -9,7 +9,7 @@ import paperbulb from './paperbulb.svg';
 
 function App() {
   const [selectedNode, setSelectedNode] = useState(null);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isLandingPage, setIsLandingPage] = useState(true);
   const [selectedPaperId, setSelectedPaperId] = useState(null);
   const [papers, setPapers] = useState({});
