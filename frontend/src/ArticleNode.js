@@ -11,7 +11,7 @@ function ArticleNode({ data }) {
         background: 'lightgray',
         border: '1px solid gray',
         textAlign: 'center',
-        width: 'px',
+        width: '300px',
         height: 'fit-content',
         fontSize: '1.5em',
       }}
