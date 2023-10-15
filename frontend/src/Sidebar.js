@@ -126,6 +126,8 @@ function Sidebar({ isCollapsed, setIsCollapsed, selectedNode }) {
                       </a>
                   ))
               ) : null}
+            <h5>Resources:</h5>
+              {resources}
           </div>
         </div>
       )}
