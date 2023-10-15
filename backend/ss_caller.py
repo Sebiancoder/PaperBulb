@@ -62,7 +62,7 @@ class SS:
     def metadata_cutter(self, paper_id: str, response: dict):
         link = f"https://www.semanticscholar.org/paper/{paper_id}"
         title = response['title']
-        authors = response['authors']
+        authors = response['authors'] if response['authors'] else [{'authorId': int(0), 'name':'N/A'}]
         year = response['year']
         abstract = response['abstract']
         journal = response['journal']

@@ -270,7 +270,7 @@ def search_papers():
 
     query_result = ss.search10(query)
 
-    if query_result is None:
+    if query_result is None or len(query_result) == 0:
         print("Query search fail")
         return "FAIL"
 
